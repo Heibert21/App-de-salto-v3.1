@@ -1,0 +1,2752 @@
+/* ==========================================================================
+   You Can Fly - Design System v5 (Mobile-First Presentation Edition)
+   ========================================================================== */
+
+:root {
+  /* Paleta Cósmica & Neón Deportivo */
+  --bg-dark: #070B14;
+  --bg-surface: rgba(13, 22, 44, 0.75);
+  --bg-surface-hover: rgba(18, 30, 58, 0.85);
+  --bg-surface-active: rgba(22, 38, 74, 0.95);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(0, 242, 254, 0.4);
+  --border-glow-purple: rgba(139, 92, 246, 0.35);
+
+  --cyan: #00F2FE;
+  --blue: #4FACFE;
+  --purple: #8B5CF6;
+  --gold: #FFD700;
+  --green: #00E676;
+  --red: #FF5252;
+  --pink: #F472B6;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Space Mono', monospace;
+
+  --radius-xl: 24px;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+
+  /* Sombras y Glassmorphism */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.7);
+  --glow-cyan: 0 0 24px rgba(0, 242, 254, 0.28);
+  --glow-gold: 0 0 24px rgba(255, 215, 0, 0.25);
+  --glow-purple: 0 0 24px rgba(139, 92, 246, 0.25);
+
+  --glass: blur(20px) saturate(180%);
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+input, button, select, textarea {
+  user-select: auto;
+  font-family: inherit;
+}
+
+html {
+  height: 100%;
+  overscroll-behavior: none;
+  background-color: var(--bg-dark);
+}
+
+body {
+  min-height: 100dvh;
+  background-color: var(--bg-dark);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 50% -10%, rgba(0, 242, 254, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 85% 90%, rgba(139, 92, 246, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 10% 80%, rgba(79, 172, 254, 0.06) 0%, transparent 60%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── App Container ── */
+.app-container {
+  width: 100%;
+  max-width: 500px; /* Ancho óptimo para experiencia móvil nativa */
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 100dvh;
+}
+
+@media (min-width: 900px) {
+  .app-container {
+    max-width: 960px;
+    padding: 16px 20px;
+  }
+}
+
+/* ── Header ── */
+.app-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px 0 6px 0;
+  width: 100%;
+}
+
+.header-main-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.logo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  filter: invert(1) drop-shadow(0 0 10px var(--cyan));
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.logo-badge:active .logo-img {
+  transform: translateY(-4px) scale(1.15) rotate(-5deg);
+}
+
+.app-header h1 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.app-header h1 .highlight {
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Botón de acceso al panel de atleta en el header */
+.btn-athlete-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(13, 22, 44, 0.88);
+  border: 1px solid rgba(0, 242, 254, 0.28);
+  border-radius: 30px;
+  padding: 4px 10px 4px 5px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  backdrop-filter: var(--glass);
+  -webkit-backdrop-filter: var(--glass);
+}
+
+.btn-athlete-chip:hover {
+  background: rgba(18, 32, 64, 0.95);
+  border-color: var(--cyan);
+  box-shadow: 0 0 16px rgba(0, 242, 254, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-athlete-chip:active {
+  transform: scale(0.96);
+  border-color: var(--cyan);
+}
+
+.athlete-avatar-mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00F2FE 0%, #8B5CF6 100%);
+  color: #070B14;
+  font-weight: 800;
+  font-size: 0.72rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(0, 242, 254, 0.35);
+}
+
+.athlete-chip-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  line-height: 1.1;
+}
+
+.athlete-chip-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  max-width: 85px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.athlete-chip-sub {
+  font-size: 0.58rem;
+  color: var(--cyan);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.tagline {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+/* ── Layout Principal ── */
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+/* ── Video / Canvas Section ── */
+.video-section {
+  width: 100%;
+}
+
+.video-card {
+  background: var(--bg-surface);
+  backdrop-filter: var(--glass);
+  -webkit-backdrop-filter: var(--glass);
+  border: 1px solid var(--border-subtle);
+  border-top-color: rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-lg);
+  padding: 6px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3; /* Relación de aspecto ergonómica que no satura la pantalla */
+  max-height: 38vh;
+  background: #040711;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (min-width: 600px) {
+  .canvas-wrapper {
+    aspect-ratio: 16 / 9;
+    max-height: 44vh;
+  }
+}
+
+#video-player, #output-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#output-canvas {
+  z-index: 2;
+  pointer-events: none;
+}
+
+.canvas-wrapper.mirror-mode #video-player {
+  transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+}
+
+/* ── Barra Flotante de Cámara ── */
+.camera-toolbar {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.camera-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  background: rgba(11, 15, 25, 0.85);
+  border: 1px solid rgba(255, 82, 82, 0.45);
+  border-radius: 20px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--red);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: auto;
+}
+
+.live-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 6px var(--red);
+  animation: pulseDot 1.2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.4; }
+}
+
+.camera-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.camera-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  background: rgba(11, 15, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 0.68rem;
+  font-weight: 700;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.camera-tool-btn:active {
+  transform: scale(0.92);
+}
+
+.camera-tool-btn.active {
+  background: rgba(0, 242, 254, 0.2);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.camera-tool-btn.btn-tool-danger {
+  border-color: rgba(255, 82, 82, 0.4);
+  color: #FFA4A4;
+}
+
+/* ── Estado Vacío (Empty State) ── */
+.empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, rgba(13, 24, 52, 0.6) 0%, rgba(4, 7, 17, 0.95) 100%);
+  padding: 16px;
+  text-align: center;
+  z-index: 1;
+}
+
+.empty-silhouette {
+  width: 76px;
+  height: 98px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jump-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 12px rgba(0, 242, 254, 0.5));
+  animation: floatAthlete 3s ease-in-out infinite alternate;
+}
+
+@keyframes floatAthlete {
+  0%   { transform: translateY(2px); }
+  100% { transform: translateY(-6px); }
+}
+
+.empty-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.empty-hint {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  max-width: 220px;
+  line-height: 1.3;
+}
+
+.empty-arrow {
+  color: var(--cyan);
+  font-size: 1rem;
+  margin-top: 4px;
+  animation: bounceArrow 1.5s infinite;
+}
+
+@keyframes bounceArrow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* -- Pose Scanner Loading -- */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(7, 11, 20, 0.92);
+  backdrop-filter: var(--glass);
+  -webkit-backdrop-filter: var(--glass);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.pose-scanner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.pose-figure {
+  position: relative;
+  width: 90px;
+  height: 135px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pose-svg {
+  width: 80px;
+  height: 120px;
+  filter: drop-shadow(0 0 6px rgba(0,242,254,0.5));
+}
+
+/* Keypoints pulsantes con delays escalonados */
+.kp { animation: kpPulse 1.6s ease-in-out infinite; }
+.kp-1 { animation-delay: 0s; }
+.kp-2 { animation-delay: 0.2s; }
+.kp-3 { animation-delay: 0.4s; }
+.kp-4 { animation-delay: 0.6s; }
+.kp-5 { animation-delay: 0.8s; }
+.kp-6 { animation-delay: 1.0s; }
+
+@keyframes kpPulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1;   }
+}
+
+/* Brazos oscilantes */
+.pose-arm-l { animation: armSwingL 1.2s ease-in-out infinite alternate; transform-origin: 40px 32px; }
+.pose-arm-r { animation: armSwingR 1.2s ease-in-out infinite alternate; transform-origin: 40px 32px; }
+
+@keyframes armSwingL {
+  from { transform: rotate(-8deg); }
+  to   { transform: rotate(8deg); }
+}
+@keyframes armSwingR {
+  from { transform: rotate(8deg); }
+  to   { transform: rotate(-8deg); }
+}
+
+/* Linea de escaneo */
+.scan-line {
+  position: absolute;
+  top: 0; left: -10px; right: -10px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  box-shadow: 0 0 10px var(--cyan);
+  border-radius: 2px;
+  animation: scanDown 1.8s ease-in-out infinite;
+}
+
+@keyframes scanDown {
+  0%   { top: 0%;   opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Anillo exterior giratorio */
+.scan-ring {
+  position: absolute;
+  inset: -14px;
+  border: 1.5px solid rgba(0, 242, 254, 0.2);
+  border-top-color: var(--cyan);
+  border-radius: 50%;
+  animation: ringRotate 2s linear infinite;
+}
+
+@keyframes ringRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Puntos de carga */
+.loading-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cyan);
+  opacity: 0.3;
+  animation: dotBounce 1.2s ease-in-out infinite;
+}
+
+.dot:nth-child(1) { animation-delay: 0s; }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% { opacity: 0.25; transform: scale(0.8); }
+  40%           { opacity: 1;    transform: scale(1.2); box-shadow: 0 0 8px var(--cyan); }
+}
+
+#loading-text {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--cyan);
+  letter-spacing: 0.04em;
+}
+
+
+/* ── HUD Central de Estado y Salto en Vivo ── */
+.state-indicator-section {
+  width: 100%;
+}
+
+.state-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-top-color: rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  backdrop-filter: var(--glass);
+  -webkit-backdrop-filter: var(--glass);
+  box-shadow: var(--shadow-md);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.state-indicator-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.state-dot-large {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  box-shadow: 0 0 6px var(--text-muted);
+  transition: all 0.25s ease;
+}
+
+.state-indicator-text {
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.state-indicator-right {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.live-num {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(180deg, #FFFFFF, #B0E0FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.live-num-unit {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+/* Variantes de Estado */
+.state-indicator.state-idle {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.state-indicator.state-preparing {
+  border-color: rgba(255, 215, 0, 0.4);
+  background: rgba(255, 215, 0, 0.06);
+}
+.state-indicator.state-preparing .state-dot-large {
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--gold);
+}
+.state-indicator.state-preparing .state-indicator-text {
+  color: var(--gold);
+}
+
+.state-indicator.state-in-air {
+  border-color: var(--cyan);
+  background: rgba(0, 242, 254, 0.12);
+  box-shadow: var(--shadow-md), var(--glow-cyan);
+  animation: pulseInAir 0.6s infinite alternate;
+}
+.state-indicator.state-in-air .state-dot-large {
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan);
+}
+.state-indicator.state-in-air .state-indicator-text {
+  color: var(--cyan);
+}
+
+.state-indicator.state-landed {
+  border-color: var(--green);
+  background: rgba(0, 230, 118, 0.1);
+  box-shadow: var(--shadow-md), 0 0 20px rgba(0, 230, 118, 0.25);
+}
+.state-indicator.state-landed .state-dot-large {
+  background: var(--green);
+  box-shadow: 0 0 12px var(--green);
+}
+.state-indicator.state-landed .state-indicator-text {
+  color: var(--green);
+}
+
+@keyframes pulseInAir {
+  from { transform: scale(1); }
+  to { transform: scale(1.02); }
+}
+
+/* ── Bento Grid de Estadísticas (3 Cards) ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+
+.stat-chip {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-top-color: rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  text-align: center;
+  backdrop-filter: var(--glass);
+  -webkit-backdrop-filter: var(--glass);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-chip:active {
+  transform: scale(0.97);
+}
+
+.stat-chip-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.6px;
+}
+
+.stat-chip-num-cyan {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.stat-chip-num-blue {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.stat-chip-value {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.stat-chip-value span:first-child {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.stat-chip-unit-gold {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.stat-chip-record {
+  border-color: rgba(255, 215, 0, 0.25);
+  background: radial-gradient(circle at top right, rgba(255, 215, 0, 0.08), var(--bg-surface) 75%);
+}
+
+.athlete-level-badge {
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-top: 2px;
+}
+
+.athlete-level-badge.beginner {
+  background: rgba(0, 242, 254, 0.15);
+  color: var(--cyan);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+}
+
+.athlete-level-badge.intermediate {
+  background: rgba(79, 172, 254, 0.15);
+  color: var(--blue);
+  border: 1px solid rgba(79, 172, 254, 0.3);
+}
+
+.athlete-level-badge.advanced {
+  background: rgba(255, 215, 0, 0.15);
+  color: var(--gold);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.athlete-level-badge.elite {
+  background: rgba(139, 92, 246, 0.2);
+  color: #C084FC;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+}
+
+.level-progress-track {
+  width: 80%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 3px;
+}
+
+.level-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--gold));
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.level-progress-label {
+  font-size: 0.52rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/* ── Panel de Configuración Rápida & Telemetría ── */
+.config-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  backdrop-filter: var(--glass);
+  -webkit-backdrop-filter: var(--glass);
+  box-shadow: var(--shadow-md);
+}
+
+.config-panel-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.height-header-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.control-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.auto-height-badge {
+  font-size: 0.55rem;
+  font-weight: 700;
+  background: rgba(0, 242, 254, 0.18);
+  color: var(--cyan);
+  padding: 1px 4px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 242, 254, 0.35);
+}
+
+.input-with-unit {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+}
+
+.custom-input {
+  width: 44px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+}
+
+.input-unit {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.mobile-height-chips {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chip-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chip-btn:active, .chip-btn.active {
+  background: rgba(0, 242, 254, 0.15);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.config-panel-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.config-panel-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 8px;
+}
+
+.status-indicator-mini {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.status-label {
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.status-locked {
+  font-size: 0.68rem;
+  color: var(--green);
+  font-weight: 700;
+}
+
+#last-jump-time {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.signal-quality-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.signal-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 10px;
+}
+
+.signal-bar {
+  width: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 1px;
+  transition: background 0.2s ease;
+}
+
+.signal-bar:nth-child(1) { height: 4px; }
+.signal-bar:nth-child(2) { height: 7px; }
+.signal-bar:nth-child(3) { height: 10px; }
+
+.signal-bar.active-good { background: var(--green); }
+.signal-bar.active-fair { background: var(--gold); }
+.signal-bar.active-poor { background: var(--red); }
+
+.signal-text {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+/* ── Sección de Acciones (Thumb Zone - Móvil) ── */
+.actions-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.actions-primary-group {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+
+.btn-action-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  outline: none;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-action-primary:active {
+  transform: scale(0.95);
+  filter: brightness(0.9);
+}
+
+.btn-action-camera {
+  background: linear-gradient(135deg, var(--cyan) 0%, var(--blue) 50%, var(--purple) 100%);
+  color: #070B14;
+  box-shadow: 0 4px 18px rgba(0, 242, 254, 0.35);
+}
+
+.btn-action-upload {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--text-primary);
+  backdrop-filter: var(--glass);
+  -webkit-backdrop-filter: var(--glass);
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+}
+
+.actions-secondary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.btn-secondary-sm, .btn-danger-sm {
+  min-height: 42px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+}
+
+.btn-secondary-sm:active {
+  transform: scale(0.95);
+  background: rgba(0, 242, 254, 0.12);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.btn-danger-sm:not(:disabled):active {
+  transform: scale(0.95);
+  background: rgba(255, 82, 82, 0.15);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.btn-danger-sm:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── Modal de Rutina Directa ── */
+.results-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 7, 17, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: #0A1226;
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg), 0 0 35px rgba(0, 242, 254, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.92) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-header h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.btn-close-modal {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.4rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-close-modal:active {
+  transform: scale(0.9);
+  background: rgba(255, 82, 82, 0.2);
+  color: var(--red);
+}
+
+.modal-body {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.jump-score-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 242, 254, 0.05);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+
+.score-label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.score-value {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+#modal-jump-val {
+  font-family: var(--font-mono);
+  font-size: 2.8rem;
+  font-weight: 800;
+  background: linear-gradient(180deg, #FFFFFF, var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+
+.score-value .unit {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.modal-routine {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.routine-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.routine-header h3 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.routine-level-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.routine-desc {
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.routine-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.routine-list li {
+  font-size: 0.74rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-sm);
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.35;
+}
+
+.routine-list li::before {
+  content: '⚡';
+  font-size: 0.85rem;
+}
+
+.routine-note {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--blue);
+}
+
+.modal-footer {
+  padding: 12px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-full-width {
+  width: 100%;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  color: #070B14;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 12px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 242, 254, 0.3);
+  transition: all 0.15s ease;
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+/* ── Toasts de Notificación ── */
+.toast-container {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 90%;
+  max-width: 380px;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-md);
+  animation: toastSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@keyframes toastSlide {
+  from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.toast.toast-success {
+  background: rgba(0, 230, 118, 0.15);
+  border: 1px solid rgba(0, 230, 118, 0.4);
+  color: var(--green);
+}
+
+.toast.toast-info {
+  background: rgba(0, 242, 254, 0.15);
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  color: var(--cyan);
+}
+
+.toast.toast-warning {
+  background: rgba(255, 82, 82, 0.15);
+  border: 1px solid rgba(255, 82, 82, 0.4);
+  color: var(--red);
+}
+
+/* ══════════════════════════════════════════════════════
+   SVG ICONS EN BOTONES
+══════════════════════════════════════════════════════ */
+.btn-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.btn-action-primary .btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.camera-tool-btn .btn-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.modal-hdr-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: -3px;
+  margin-right: 6px;
+}
+
+.routine-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+/* ══════════════════════════════════════════════════════
+   MODAL DE TIPS DE GRABACION
+══════════════════════════════════════════════════════ */
+.video-tips-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.video-tips-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(7, 11, 20, 0.85);
+  backdrop-filter: blur(12px);
+}
+
+.video-tips-content {
+  position: relative;
+  background: linear-gradient(160deg, rgba(13,22,44,0.98) 0%, rgba(7,11,20,0.99) 100%);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  border-bottom: none;
+  border-radius: 28px 28px 0 0;
+  width: 100%;
+  max-width: 500px;
+  max-height: 92dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-shadow: 0 -16px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 242, 254, 0.06);
+  animation: tipsSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes tipsSlideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.video-tips-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 0;
+}
+
+.video-tips-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+/* Dino scene */
+.dino-scene {
+  position: relative;
+  height: 100px;
+  overflow: hidden;
+  margin: 12px 16px 0;
+  background: rgba(0, 242, 254, 0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 242, 254, 0.08);
+}
+
+.dino-ground {
+  position: absolute;
+  bottom: 18px;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0,242,254,0.3), transparent);
+}
+
+.dino-msg {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: right;
+  max-width: 120px;
+  line-height: 1.3;
+}
+
+.dino-wrap {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  animation: dinoJump 0.45s steps(2) infinite;
+}
+
+@keyframes dinoJump {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-3px); }
+  100% { transform: translateY(0); }
+}
+
+.dino { position: relative; width: 60px; height: 60px; }
+.dino-body { position: relative; }
+
+.dino-torso {
+  position: absolute;
+  top: 18px; left: 6px;
+  width: 38px; height: 26px;
+  background: var(--cyan);
+  border-radius: 10px 4px 4px 12px;
+}
+
+.dino-head {
+  position: absolute;
+  top: 0; left: 16px;
+  width: 30px; height: 20px;
+  background: var(--cyan);
+  border-radius: 6px 10px 6px 2px;
+}
+
+.dino-eye {
+  position: absolute;
+  top: 4px; right: 7px;
+  width: 5px; height: 5px;
+  background: var(--bg-dark);
+  border-radius: 50%;
+}
+
+.dino-mouth {
+  position: absolute;
+  bottom: 3px; right: 4px;
+  width: 10px; height: 2px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 2px;
+}
+
+.dino-nostril {
+  position: absolute;
+  top: 6px; right: 4px;
+  width: 2px; height: 2px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 50%;
+}
+
+.dino-neck {
+  position: absolute;
+  top: 14px; left: 18px;
+  width: 12px; height: 10px;
+  background: var(--cyan);
+}
+
+.dino-arm {
+  position: absolute;
+  top: 5px; left: 4px;
+  width: 10px; height: 7px;
+  background: #00d4e0;
+  border-radius: 3px 3px 5px 3px;
+  transform: rotate(-15deg);
+}
+
+.dino-tail {
+  position: absolute;
+  top: 12px; left: -16px;
+  width: 18px; height: 10px;
+  background: var(--cyan);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  border-radius: 0 0 0 6px;
+}
+
+.dino-legs {
+  position: absolute;
+  bottom: -20px; left: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.dino-leg {
+  width: 10px; height: 20px;
+  background: var(--cyan);
+  border-radius: 3px;
+  transform-origin: top center;
+}
+
+.dino-leg-l { animation: legL 0.45s steps(1) infinite; }
+.dino-leg-r { animation: legR 0.45s steps(1) infinite; }
+
+@keyframes legL {
+  0%   { transform: rotate(20deg); }
+  50%  { transform: rotate(-15deg); }
+  100% { transform: rotate(20deg); }
+}
+
+@keyframes legR {
+  0%   { transform: rotate(-15deg); }
+  50%  { transform: rotate(20deg); }
+  100% { transform: rotate(-15deg); }
+}
+
+.dino-foot {
+  position: absolute;
+  bottom: -4px; left: -3px;
+  width: 16px; height: 5px;
+  background: #00d4e0;
+  border-radius: 2px;
+}
+
+.dino-cactus {
+  position: absolute;
+  right: 30px; bottom: 20px;
+  width: 13px; height: 38px;
+  background: #22863a;
+  border-radius: 4px;
+  animation: cactusMove 3s linear infinite;
+}
+
+.dino-cactus::before {
+  content: '';
+  position: absolute;
+  top: 10px; left: -9px;
+  width: 10px; height: 16px;
+  background: #22863a;
+  border-radius: 4px 0 0 4px;
+}
+
+.dino-cactus::after {
+  content: '';
+  position: absolute;
+  top: 6px; right: -9px;
+  width: 10px; height: 13px;
+  background: #22863a;
+  border-radius: 0 4px 4px 0;
+}
+
+@keyframes cactusMove {
+  0%   { right: 30px;              opacity: 0; }
+  8%   { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { right: calc(100% + 30px); opacity: 0; }
+}
+
+/* Tips list */
+.video-tips-list {
+  list-style: none;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.video-tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.video-tip-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.tip-icon-wrap {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tip-icon-wrap svg { width: 18px; height: 18px; }
+
+.tip-icon-blue   { background: rgba(79,172,254,0.15); color: var(--blue);   }
+.tip-icon-gold   { background: rgba(255,215,0,0.12);  color: var(--gold);   }
+.tip-icon-cyan   { background: rgba(0,242,254,0.12);  color: var(--cyan);   }
+.tip-icon-purple { background: rgba(139,92,246,0.15); color: var(--purple); }
+.tip-icon-green  { background: rgba(0,230,118,0.12);  color: var(--green);  }
+
+.tip-text { display: flex; flex-direction: column; gap: 2px; }
+
+.tip-text strong {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.tip-text span {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Footer */
+.video-tips-footer {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, rgba(7,11,20,0.99) 70%, transparent);
+}
+
+.btn-tips-cancel {
+  flex: 1;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-tips-cancel:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--text-primary);
+}
+
+.btn-tips-confirm {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, var(--cyan) 0%, var(--blue) 100%);
+  color: var(--bg-dark);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  box-shadow: 0 0 24px rgba(0, 242, 254, 0.3);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-tips-confirm svg { width: 17px; height: 17px; }
+
+.btn-tips-confirm:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.2);
+}
+
+@media (min-width: 900px) {
+  .video-tips-modal { align-items: center; }
+  .video-tips-content {
+    border-radius: 28px;
+    border: 1px solid rgba(0, 242, 254, 0.2);
+    max-width: 460px;
+    max-height: 85dvh;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   PANEL DE MÓVIL DEL ATLETA (Bottom Sheet & Full UI)
+══════════════════════════════════════════════════════ */
+.btn-athlete-quick {
+  background: rgba(0, 242, 254, 0.08);
+  border-color: rgba(0, 242, 254, 0.25);
+  color: var(--cyan);
+}
+
+.btn-athlete-quick:hover {
+  background: rgba(0, 242, 254, 0.16);
+  border-color: var(--cyan);
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.25);
+}
+
+.athlete-profile-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.athlete-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 7, 18, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  cursor: pointer;
+}
+
+.athlete-modal-content {
+  position: relative;
+  background: linear-gradient(165deg, rgba(13, 22, 44, 0.98) 0%, rgba(7, 11, 20, 0.99) 100%);
+  border: 1px solid rgba(0, 242, 254, 0.25);
+  border-bottom: none;
+  border-radius: 28px 28px 0 0;
+  width: 100%;
+  max-width: 500px;
+  max-height: 92dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 -16px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 242, 254, 0.08);
+  animation: athleteSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes athleteSlideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.mobile-sheet-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.22);
+  margin: 10px auto 2px;
+}
+
+.athlete-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.athlete-modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.athlete-badge-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(0, 242, 254, 0.12);
+  color: var(--cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.athlete-badge-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.athlete-modal-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.athlete-modal-subtitle {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.athlete-modal-body {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Tarjeta Hero del Atleta */
+.athlete-card-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(0, 242, 254, 0.16);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.athlete-hero-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00F2FE 0%, #8B5CF6 100%);
+  color: #070B14;
+  font-size: 1.25rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+  box-shadow: 0 0 16px rgba(0, 242, 254, 0.35);
+}
+
+.athlete-hero-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.athlete-hero-name {
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.athlete-hero-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.athlete-tag-level {
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(0, 242, 254, 0.12);
+  color: var(--cyan);
+  border: 1px solid rgba(0, 242, 254, 0.25);
+}
+
+.athlete-tag-stat {
+  font-size: 0.72rem;
+  color: var(--gold);
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+/* Formulario */
+.athlete-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.form-label svg {
+  width: 14px;
+  height: 14px;
+  color: var(--cyan);
+}
+
+.label-with-unit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.label-hint {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.quick-chips-grid {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 2px 0 4px;
+  scrollbar-width: none;
+}
+
+.quick-chips-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.quick-chips-grid .chip-btn {
+  flex: 1;
+  min-width: 62px;
+  padding: 7px 8px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.quick-chips-grid .chip-btn:hover {
+  background: rgba(0, 242, 254, 0.1);
+  border-color: rgba(0, 242, 254, 0.3);
+  color: var(--cyan);
+}
+
+.quick-chips-grid .chip-btn.active {
+  background: rgba(0, 242, 254, 0.18);
+  border-color: var(--cyan);
+  color: #FFFFFF;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.25);
+}
+
+/* Tarjeta Biomecánica */
+.athlete-bio-card {
+  background: rgba(0, 242, 254, 0.03);
+  border: 1px solid rgba(0, 242, 254, 0.14);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bio-card-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.bio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 10px;
+}
+
+.bio-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.bio-label {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.bio-value {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.bio-highlight {
+  color: var(--cyan);
+}
+
+.bio-sub {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Footer del panel móvil */
+.athlete-modal-footer {
+  display: flex;
+  gap: 10px;
+  padding: 12px 20px calc(16px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, rgba(7, 11, 20, 0.99) 70%, transparent);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.athlete-footer-hint {
+  flex: 1;
+  text-align: center;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  padding: 8px 0;
+}
+
+/* ── Pestañas del Panel de Atletas ── */
+.athlete-tabs-nav {
+  display: flex;
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 16px;
+  gap: 8px;
+}
+
+.athlete-tab-nav-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.athlete-tab-nav-btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.athlete-tab-nav-btn:hover {
+  color: var(--text-secondary);
+}
+
+.athlete-tab-nav-btn.active {
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+  background: rgba(0, 242, 254, 0.05);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.tab-count-badge {
+  font-size: 0.65rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1px 6px;
+  border-radius: 10px;
+  color: var(--text-primary);
+}
+
+.athlete-tab-nav-btn.active .tab-count-badge {
+  background: rgba(0, 242, 254, 0.2);
+  color: var(--cyan);
+}
+
+/* ── Roster (lista de atletas) ── */
+.athlete-roster-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+/* Tarjeta de atleta en la lista */
+.athlete-roster-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-md);
+  padding: 11px 14px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.athlete-roster-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  border-radius: 2px 0 0 2px;
+  background: transparent;
+  transition: background 0.2s;
+}
+
+.athlete-roster-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(0, 242, 254, 0.2);
+}
+
+.athlete-roster-card.roster-active {
+  background: rgba(0, 242, 254, 0.06);
+  border-color: rgba(0, 242, 254, 0.35);
+}
+
+.athlete-roster-card.roster-active::before {
+  background: var(--cyan);
+}
+
+.roster-card-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4FACFE 0%, #8B5CF6 100%);
+  color: #070B14;
+  font-size: 1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: -0.5px;
+  transition: box-shadow 0.2s;
+}
+
+.roster-active .roster-card-avatar {
+  background: linear-gradient(135deg, #00F2FE 0%, #8B5CF6 100%);
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+}
+
+.roster-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.roster-card-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.roster-card-meta {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.roster-active .roster-card-name {
+  color: var(--cyan);
+}
+
+.roster-card-active-badge {
+  display: none;
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--cyan);
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  border-radius: 20px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.roster-active .roster-card-active-badge {
+  display: inline-flex;
+}
+
+.roster-card-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.roster-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.roster-action-btn:hover {
+  background: rgba(0, 242, 254, 0.1);
+  color: var(--cyan);
+}
+
+.roster-action-btn.roster-delete:hover {
+  background: rgba(255, 82, 82, 0.15);
+  color: var(--red);
+}
+
+.roster-action-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ── Estadísticas en la tarjeta de atleta del Roster ── */
+.roster-card-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.roster-card-badge {
+  font-size: 0.56rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.roster-card-badge.beginner {
+  background: rgba(0, 242, 254, 0.15);
+  color: var(--cyan);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+}
+
+.roster-card-badge.intermediate {
+  background: rgba(79, 172, 254, 0.15);
+  color: var(--blue);
+  border: 1px solid rgba(79, 172, 254, 0.3);
+}
+
+.roster-card-badge.advanced {
+  background: rgba(255, 215, 0, 0.15);
+  color: var(--gold);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.roster-card-badge.elite {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c084fc;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+}
+
+.roster-card-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.roster-stat-pill {
+  font-size: 0.64rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  padding: 2px 7px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.roster-stat-pill.record {
+  background: rgba(255, 215, 0, 0.12);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  color: var(--gold);
+}
+
+.roster-stat-pill.last {
+  background: rgba(0, 242, 254, 0.08);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  color: var(--cyan);
+}
+
+.roster-stat-pill.empty {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.62rem;
+}
+
+/* ── Vista: Tabla de Resultados / Ránking ── */
+.ranking-header-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(0, 242, 254, 0.05) 100%);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.ranking-header-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.ranking-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ranking-header-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ranking-header-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.athlete-ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ranking-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  transition: all 0.18s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.ranking-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(0, 242, 254, 0.25);
+}
+
+.ranking-card.rank-1 {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(255, 215, 0, 0.35);
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.1);
+}
+
+.ranking-card.rank-2 {
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(192, 192, 192, 0.3);
+}
+
+.ranking-card.rank-3 {
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(205, 127, 50, 0.3);
+}
+
+.ranking-pos {
+  width: 28px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ranking-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4FACFE 0%, #8B5CF6 100%);
+  color: #070B14;
+  font-size: 0.88rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ranking-card.rank-1 .ranking-avatar {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+}
+
+.ranking-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ranking-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ranking-meta {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ranking-score-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.ranking-jump-val {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.ranking-jump-unit {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.ranking-watts {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.btn-activate-ranking {
+  padding: 4px 8px;
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid rgba(0, 242, 254, 0.25);
+  border-radius: 6px;
+  color: var(--cyan);
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-activate-ranking:hover {
+  background: rgba(0, 242, 254, 0.2);
+  border-color: var(--cyan);
+}
+
+.btn-activate-ranking.active-btn {
+  background: var(--cyan);
+  color: #070B14;
+  font-weight: 800;
+  cursor: default;
+}
+
+/* Botón de agregar nuevo atleta */
+.btn-add-athlete {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  background: transparent;
+  border: 1.5px dashed rgba(0, 242, 254, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--cyan);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.btn-add-athlete:hover {
+  background: rgba(0, 242, 254, 0.06);
+  border-color: var(--cyan);
+  box-shadow: 0 0 14px rgba(0, 242, 254, 0.15);
+}
+
+.btn-add-athlete:active {
+  transform: scale(0.98);
+}
+
+.add-athlete-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(0, 242, 254, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.add-athlete-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Cabecera del formulario de atleta con preview de avatar */
+.athlete-form-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+  border: 1px solid rgba(0, 242, 254, 0.18);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+}
+
+.athlete-form-avatar-preview {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00F2FE 0%, #8B5CF6 100%);
+  color: #070B14;
+  font-size: 1.15rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 18px rgba(0, 242, 254, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  letter-spacing: -0.5px;
+}
+
+.athlete-form-avatar-preview:not(:empty) {
+  transform: scale(1.05);
+  box-shadow: 0 0 22px rgba(0, 242, 254, 0.5);
+}
+
+.athlete-form-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.athlete-form-header-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--cyan);
+  opacity: 0.8;
+}
+
+/* Nombre en preview: grande y destacado */
+.athlete-form-header-hint {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  word-break: break-word;
+  overflow-wrap: break-word;
+  transition: color 0.2s ease, font-size 0.15s ease;
+  line-height: 1.2;
+  max-width: 100%;
+}
+
+/* Cuando es el placeholder (texto de ayuda), se muestra diferente */
+.athlete-form-header-hint.is-placeholder {
+  font-size: 0.8rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+/* Campo de texto para nombre de atleta */
+.athlete-name-input,
+#athlete-name-input {
+  width: 100% !important;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: left !important;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.athlete-name-input:focus,
+#athlete-name-input:focus {
+  border-color: var(--cyan);
+  background: rgba(0, 242, 254, 0.05);
+  box-shadow: 0 0 14px rgba(0, 242, 254, 0.25);
+}
+
+.athlete-name-input::placeholder,
+#athlete-name-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Contenedor de inputs numéricos en el formulario de atleta (Peso y Estatura) */
+.athlete-form .input-with-unit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.athlete-form .input-with-unit:focus-within {
+  border-color: var(--cyan);
+  background: rgba(0, 242, 254, 0.05);
+  box-shadow: 0 0 14px rgba(0, 242, 254, 0.25);
+}
+
+.athlete-form .input-with-unit .custom-input {
+  flex: 1;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+}
+
+.athlete-form .input-with-unit .input-unit {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cyan);
+  padding-left: 8px;
+}
+
+@media (min-width: 900px) {
+  .athlete-profile-modal {
+    align-items: center;
+  }
+  .athlete-modal-content {
+    border-radius: 28px;
+    border: 1px solid rgba(0, 242, 254, 0.25);
+    max-width: 480px;
+    max-height: 85dvh;
+  }
+}
