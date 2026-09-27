@@ -159,14 +159,14 @@ export class JumpController {
     try {
       // Cargar modelo de MediaPipe: Full en desktop (más preciso), Lite en móvil (más rápido)
       const useLiteModel = this.isMobile();
-      this.uiView.updateLoadingState(true, `Iniciando MediaPipe Pose (${useLiteModel ? 'Lite' : 'Full'})...`);
+      this.uiView.updateLoadingState(true, `Iniciando IA (${useLiteModel ? 'Lite' : 'Full'})...`);
       await this.poseModel.initialize((msg) => {
         this.uiView.updateLoadingState(true, msg);
       }, useLiteModel);
       this.uiView.updateLoadingState(false);
     } catch (error) {
-      console.error("No se pudo cargar MediaPipe Pose:", error);
-      this.uiView.updateLoadingState(true, "Error al cargar MediaPipe Pose. Verifica tu conexión a internet.");
+      console.error("No se pudo cargar el modelo:", error);
+      this.uiView.updateLoadingState(true, "Error al cargar el modelo de IA. Verifica tu conexión a internet.");
     }
 
     // Pausar el bucle cuando el usuario cambia de pestaña o app (ahorra batería)
@@ -564,7 +564,6 @@ export class JumpController {
                 this.uiView.updateSignalQuality(0, 'IDLE');
 
                 if (now - this.lastLandmarkSeenMs > 3000 && !this.poseLostNotified && this.lastLandmarkSeenMs > 0) {
-                  this.uiView.showToast("⚠️ Posiciónate frente a la cámara con el cuerpo completo visible", 'info');
                   this.poseLostNotified = true;
                 }
               }

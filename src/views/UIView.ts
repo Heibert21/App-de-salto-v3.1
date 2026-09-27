@@ -34,6 +34,7 @@ export interface AthleteStats {
   lastJumpCm: number;
   totalJumps: number;
   lastJumpDate?: string;
+  jumpHistory?: number[];
 }
 
 export class UIView {
@@ -42,10 +43,10 @@ export class UIView {
   private maxJumpVal: HTMLElement;
   private jumpStateBadge: HTMLElement;
   private jumpStateText: HTMLElement;
-  private flightTimeText: HTMLElement;
-  private displacementText: HTMLElement;
-  private baselineStatusText: HTMLElement;
-  private lastJumpTimeText: HTMLElement;
+  private flightTimeText: HTMLElement | null;
+  private displacementText: HTMLElement | null;
+  private baselineStatusText: HTMLElement | null;
+  private lastJumpTimeText: HTMLElement | null;
 
   private loadingOverlay: HTMLElement;
   private loadingText: HTMLElement;
@@ -65,8 +66,8 @@ export class UIView {
   private btnStopCamera: HTMLButtonElement;
   private canvasWrapper: HTMLElement | null;
 
-  private userHeightInput: HTMLInputElement;
-  private autoHeightBadge: HTMLElement;
+  private userHeightInput: HTMLInputElement | null;
+  private autoHeightBadge: HTMLElement | null;
   private heightChips: HTMLButtonElement[];
   private videoElement: HTMLVideoElement;
   private canvasElement: HTMLCanvasElement;
@@ -96,12 +97,57 @@ export class UIView {
   private btnAddNewAthlete: HTMLButtonElement | null = null;
   private btnCancelAthleteForm: HTMLButtonElement | null = null;
 
+  // Pestañas y vistas del panel del atleta
+  private tabBtnBiopass: HTMLButtonElement | null = null;
+  private tabBtnRoster: HTMLButtonElement | null = null;
+  private tabBtnRanking: HTMLButtonElement | null = null;
+
+  private athleteBiopassView: HTMLElement | null = null;
   private athleteRosterView: HTMLElement | null = null;
+  private athleteRankingView: HTMLElement | null = null;
   private athleteFormView: HTMLElement | null = null;
   private athleteRosterList: HTMLElement | null = null;
+  private athleteRankingList: HTMLElement | null = null;
+  private athleteCountBadge: HTMLElement | null = null;
+
+  private footerBiopass: HTMLElement | null = null;
   private footerRoster: HTMLElement | null = null;
   private footerForm: HTMLElement | null = null;
   private rosterFooterHint: HTMLElement | null = null;
+
+  // Elementos de la Ficha Bio-Pass
+  private biopassCodeBadge: HTMLElement | null = null;
+  private biopassAvatar: HTMLElement | null = null;
+  private biopassAvatarBadge: HTMLElement | null = null;
+  private biopassRankTag: HTMLElement | null = null;
+  private biopassName: HTMLElement | null = null;
+  private biopassWeight: HTMLElement | null = null;
+  private biopassHeight: HTMLElement | null = null;
+  private biopassBmiTag: HTMLElement | null = null;
+  private biopassStatusLabel: HTMLElement | null = null;
+  private biopassScoreVal: HTMLElement | null = null;
+  private biopassScoreStatus: HTMLElement | null = null;
+  private biopassRecordVal: HTMLElement | null = null;
+  private biopassRecordSub: HTMLElement | null = null;
+  private biopassHangtimeVal: HTMLElement | null = null;
+  private biopassHangtimeSub: HTMLElement | null = null;
+  private biopassWattsVal: HTMLElement | null = null;
+  private biopassWattsRatio: HTMLElement | null = null;
+  private biopassLastVal: HTMLElement | null = null;
+  private biopassTotalJumps: HTMLElement | null = null;
+  private biopassSparkline: HTMLElement | null = null;
+  private biopassConsistencyBadge: HTMLElement | null = null;
+
+  private btnBiopassShare: HTMLButtonElement | null = null;
+  private btnBiopassEdit: HTMLButtonElement | null = null;
+  private btnBiopassSwitchRoster: HTMLButtonElement | null = null;
+
+  // Modal de Póster Nike
+  private posterModal: HTMLElement | null = null;
+  private posterModalBackdrop: HTMLElement | null = null;
+  private btnClosePoster: HTMLElement | null = null;
+  private btnDownloadPoster: HTMLButtonElement | null = null;
+  private posterImgPreview: HTMLImageElement | null = null;
 
   private formAvatarPreview: HTMLElement | null = null;
   private formHeaderNamePreview: HTMLElement | null = null;
@@ -117,19 +163,12 @@ export class UIView {
   private athleteRoster: RemoteAthlete[] = [];
   private activeAthleteId: string = '';
   private static readonly ACTIVE_KEY = 'youcanfly_active_athlete_id';
-
-  // Pestañas y vista de resultados/ránking
-  private tabBtnRoster: HTMLButtonElement | null = null;
-  private tabBtnRanking: HTMLButtonElement | null = null;
-  private athleteRankingView: HTMLElement | null = null;
-  private athleteRankingList: HTMLElement | null = null;
-  private athleteCountBadge: HTMLElement | null = null;
   private savedCallbacks: UIEventCallbacks | null = null;
 
 
   // Elementos de señal y toasts
   private signalBars: HTMLElement[];
-  private signalLabel: HTMLElement;
+  private signalLabel: HTMLElement | null;
   private toastContainer: HTMLElement;
   private confettiEffect: ConfettiEffect;
   private emptyState: HTMLElement | null;
@@ -154,10 +193,10 @@ export class UIView {
     this.maxJumpVal = this.getElement("max-jump-val");
     this.jumpStateBadge = this.getElement("jump-state-badge");
     this.jumpStateText = this.getElement("jump-state-text");
-    this.flightTimeText = this.getElement("flight-time-text");
-    this.displacementText = this.getElement("displacement-text");
-    this.baselineStatusText = this.getElement("baseline-status-text");
-    this.lastJumpTimeText = this.getElement("last-jump-time");
+    this.flightTimeText = document.getElementById("flight-time-text");
+    this.displacementText = document.getElementById("displacement-text");
+    this.baselineStatusText = document.getElementById("baseline-status-text");
+    this.lastJumpTimeText = document.getElementById("last-jump-time");
 
     this.loadingOverlay = this.getElement("loading-overlay");
     this.loadingText = this.getElement("loading-text");
@@ -176,8 +215,8 @@ export class UIView {
 
     this.btnResetRecord = this.getElement("btn-reset-record") as HTMLButtonElement;
 
-    this.userHeightInput = this.getElement("user-height-input") as HTMLInputElement;
-    this.autoHeightBadge = this.getElement("auto-height-badge");
+    this.userHeightInput = document.getElementById("user-height-input") as HTMLInputElement | null;
+    this.autoHeightBadge = document.getElementById("auto-height-badge");
     this.heightChips = Array.from(document.querySelectorAll<HTMLButtonElement>("#mobile-height-chips .chip-btn"));
 
     this.videoElement = this.getElement("video-player") as HTMLVideoElement;
@@ -186,12 +225,19 @@ export class UIView {
 
     // Indicador de calidad de señal
     this.signalBars = [
-      this.getElement("signal-bar-1"),
-      this.getElement("signal-bar-2"),
-      this.getElement("signal-bar-3")
-    ];
-    this.signalLabel = this.getElement("signal-label");
+      document.getElementById("signal-bar-1"),
+      document.getElementById("signal-bar-2"),
+      document.getElementById("signal-bar-3")
+    ].filter((el): el is HTMLElement => el !== null);
+    this.signalLabel = document.getElementById("signal-label");
     this.toastContainer = this.getElement("toast-container");
+
+    // Sincronizar salida de pantalla completa con tecla Esc en PC
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement && document.body.classList.contains("camera-fullscreen")) {
+        document.body.classList.remove("camera-fullscreen");
+      }
+    });
 
     // Elementos de rutina en modal de pantalla completa
     this.resultsModal = this.getElement("results-modal");
@@ -257,17 +303,56 @@ export class UIView {
     this.btnAddNewAthlete = document.getElementById("btn-add-new-athlete") as HTMLButtonElement | null;
     this.btnCancelAthleteForm = document.getElementById("btn-cancel-athlete-form") as HTMLButtonElement | null;
 
-    this.athleteRosterView = document.getElementById("athlete-roster-view");
-    this.athleteFormView = document.getElementById("athlete-form-view");
-    this.athleteRosterList = document.getElementById("athlete-roster-list");
-    this.athleteRankingView = document.getElementById("athlete-ranking-view");
-    this.athleteRankingList = document.getElementById("athlete-ranking-list");
+    this.tabBtnBiopass = document.getElementById("tab-btn-biopass") as HTMLButtonElement | null;
     this.tabBtnRoster = document.getElementById("tab-btn-roster") as HTMLButtonElement | null;
     this.tabBtnRanking = document.getElementById("tab-btn-ranking") as HTMLButtonElement | null;
+
+    this.athleteBiopassView = document.getElementById("athlete-biopass-view");
+    this.athleteRosterView = document.getElementById("athlete-roster-view");
+    this.athleteRankingView = document.getElementById("athlete-ranking-view");
+    this.athleteFormView = document.getElementById("athlete-form-view");
+    this.athleteRosterList = document.getElementById("athlete-roster-list");
+    this.athleteRankingList = document.getElementById("athlete-ranking-list");
     this.athleteCountBadge = document.getElementById("athlete-count-badge");
+
+    this.footerBiopass = document.getElementById("athlete-modal-footer-biopass");
     this.footerRoster = document.getElementById("athlete-modal-footer-roster");
     this.footerForm = document.getElementById("athlete-modal-footer-form");
     this.rosterFooterHint = document.getElementById("roster-footer-hint");
+
+    // Ficha Bio-Pass
+    this.biopassCodeBadge = document.getElementById("biopass-code-badge");
+    this.biopassAvatar = document.getElementById("biopass-avatar");
+    this.biopassAvatarBadge = document.getElementById("biopass-avatar-badge");
+    this.biopassRankTag = document.getElementById("biopass-rank-tag");
+    this.biopassName = document.getElementById("biopass-name");
+    this.biopassWeight = document.getElementById("biopass-weight");
+    this.biopassHeight = document.getElementById("biopass-height");
+    this.biopassBmiTag = document.getElementById("biopass-bmi-tag");
+    this.biopassStatusLabel = document.getElementById("biopass-status-label");
+    this.biopassScoreVal = document.getElementById("biopass-score-val");
+    this.biopassScoreStatus = document.getElementById("biopass-score-status");
+    this.biopassRecordVal = document.getElementById("biopass-record-val");
+    this.biopassRecordSub = document.getElementById("biopass-record-sub");
+    this.biopassHangtimeVal = document.getElementById("biopass-hangtime-val");
+    this.biopassHangtimeSub = document.getElementById("biopass-hangtime-sub");
+    this.biopassWattsVal = document.getElementById("biopass-watts-val");
+    this.biopassWattsRatio = document.getElementById("biopass-watts-ratio");
+    this.biopassLastVal = document.getElementById("biopass-last-val");
+    this.biopassTotalJumps = document.getElementById("biopass-total-jumps");
+    this.biopassSparkline = document.getElementById("biopass-sparkline");
+    this.biopassConsistencyBadge = document.getElementById("biopass-consistency-badge");
+
+    this.btnBiopassShare = document.getElementById("btn-biopass-share") as HTMLButtonElement | null;
+    this.btnBiopassEdit = document.getElementById("btn-biopass-edit") as HTMLButtonElement | null;
+    this.btnBiopassSwitchRoster = document.getElementById("btn-biopass-switch-roster") as HTMLButtonElement | null;
+
+    // Modal de Póster Nike
+    this.posterModal = document.getElementById("poster-modal");
+    this.posterModalBackdrop = document.getElementById("poster-modal-backdrop");
+    this.btnClosePoster = document.getElementById("btn-close-poster");
+    this.btnDownloadPoster = document.getElementById("btn-download-poster") as HTMLButtonElement | null;
+    this.posterImgPreview = document.getElementById("poster-img-preview") as HTMLImageElement | null;
 
     this.formAvatarPreview = document.getElementById("form-avatar-preview");
     this.formHeaderNamePreview = document.getElementById("form-header-name-preview");
@@ -300,7 +385,9 @@ export class UIView {
   }
 
   public setInitialValues(userHeightCm: number): void {
-    this.userHeightInput.value = String(userHeightCm);
+    if (this.userHeightInput) {
+      this.userHeightInput.value = String(userHeightCm);
+    }
     this.highlightActiveChip(userHeightCm);
   }
 
@@ -308,7 +395,9 @@ export class UIView {
    * Actualiza el valor de estatura en la interfaz (ej. cuando la IA la estima automáticamente o se cambia por chip)
    */
   public updateUserHeightInput(heightCm: number, isAutoEstimated: boolean = true): void {
-    this.userHeightInput.value = String(heightCm);
+    if (this.userHeightInput) {
+      this.userHeightInput.value = String(heightCm);
+    }
     this.highlightActiveChip(heightCm);
     this.setAutoHeightBadgeVisible(isAutoEstimated);
   }
@@ -380,25 +469,29 @@ export class UIView {
 
     this.btnResetRecord.addEventListener("click", () => callbacks.onResetRecord());
 
-    // Eventos para chips táctiles de estatura (1-Tap para móvil)
+    // Eventos para chips táctiles de estatura (1-Tap para móvil) si existen
     this.heightChips.forEach((chip) => {
       chip.addEventListener("click", () => {
         const val = parseFloat(chip.getAttribute("data-height") ?? "172");
-        this.userHeightInput.value = String(val);
+        if (this.userHeightInput) {
+          this.userHeightInput.value = String(val);
+        }
         this.highlightActiveChip(val);
         this.setAutoHeightBadgeVisible(false); // Selección manual desactiva badge de IA
         callbacks.onChangeUserHeight(val);
       });
     });
 
-    this.userHeightInput.addEventListener("change", () => {
-      const val = parseFloat(this.userHeightInput.value);
-      if (!isNaN(val) && val >= 120 && val <= 230) {
-        this.highlightActiveChip(val);
-        this.setAutoHeightBadgeVisible(false); // Ajuste manual desactiva badge de IA
-        callbacks.onChangeUserHeight(val);
-      }
-    });
+    if (this.userHeightInput) {
+      this.userHeightInput.addEventListener("change", () => {
+        const val = parseFloat(this.userHeightInput!.value);
+        if (!isNaN(val) && val >= 120 && val <= 230) {
+          this.highlightActiveChip(val);
+          this.setAutoHeightBadgeVisible(false); // Ajuste manual desactiva badge de IA
+          callbacks.onChangeUserHeight(val);
+        }
+      });
+    }
 
     this.btnShowRoutine.addEventListener("click", () => {
       if (callbacks.onShowRoutine) {
@@ -1073,20 +1166,26 @@ export class UIView {
 
     // 4. Tiempo de vuelo actual
     if (flightTimeMs > 0) {
-      this.flightTimeText.textContent = `${(flightTimeMs / 1000).toFixed(2)} s`;
-      this.lastJumpTimeText.textContent = `Último vuelo: ${(flightTimeMs / 1000).toFixed(2)}s`;
+      if (this.flightTimeText) {
+        this.flightTimeText.textContent = `${(flightTimeMs / 1000).toFixed(2)} s`;
+      }
+      if (this.lastJumpTimeText) {
+        this.lastJumpTimeText.textContent = `Último vuelo: ${(flightTimeMs / 1000).toFixed(2)}s`;
+      }
     }
 
     // 5. Desplazamiento
-    if (displacementCm > 0) {
+    if (displacementCm > 0 && this.displacementText) {
       this.displacementText.textContent = `${displacementCm.toFixed(1)} cm`;
     }
 
     // 6. Estado Baseline Suelo
     const baselineStatusStr = isBaselineLocked ? '🔒 Fijado' : '⏳ Calibrando';
     if (baselineStatusStr !== this.lastBaselineStatus) {
-      this.baselineStatusText.textContent = baselineStatusStr;
-      this.baselineStatusText.className = isBaselineLocked ? 'status-locked' : 'status-calibrating';
+      if (this.baselineStatusText) {
+        this.baselineStatusText.textContent = baselineStatusStr;
+        this.baselineStatusText.className = isBaselineLocked ? 'status-locked' : 'status-calibrating';
+      }
       this.lastBaselineStatus = baselineStatusStr;
     }
 
@@ -1142,8 +1241,10 @@ export class UIView {
       });
 
       // Actualizar etiqueta
-      this.signalLabel.textContent = label;
-      this.signalLabel.className = "signal-text " + colorClass;
+      if (this.signalLabel) {
+        this.signalLabel.textContent = label;
+        this.signalLabel.className = "signal-text " + colorClass;
+      }
     }
   }
 
@@ -1230,6 +1331,34 @@ export class UIView {
   }
 
   /**
+   * Activa el modo pantalla completa para la cámara en tiempo real
+   */
+  public enterCameraFullscreen(): void {
+    document.body.classList.add("camera-fullscreen");
+    try {
+      if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    } catch {
+      // Ignorar si el navegador no permite Fullscreen API
+    }
+  }
+
+  /**
+   * Sale del modo pantalla completa de la cámara
+   */
+  public exitCameraFullscreen(): void {
+    document.body.classList.remove("camera-fullscreen");
+    try {
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    } catch {
+      // Ignorar
+    }
+  }
+
+  /**
    * Actualiza la interfaz según la fuente activa (Cámara vs Video vs Inactivo)
    */
   public setSourceState(mode: 'camera' | 'video' | 'none', label?: string): void {
@@ -1239,6 +1368,8 @@ export class UIView {
     this.lastSignalLevel = -1;
 
     if (mode === 'camera') {
+      this.enterCameraFullscreen();
+      if (this.emptyState) this.emptyState.style.display = 'none';
       this.cameraToolbar.style.display = "flex";
       this.canvasWrapper?.classList.add('has-video');
 
@@ -1248,6 +1379,8 @@ export class UIView {
       this.btnUploadVideoText.textContent = "Subir Video";
       this.btnResetRecord.disabled = false;
     } else if (mode === 'video') {
+      this.exitCameraFullscreen();
+      if (this.emptyState) this.emptyState.style.display = 'none';
       this.cameraToolbar.style.display = "none";
       this.canvasWrapper?.classList.add('has-video');
 
@@ -1257,6 +1390,8 @@ export class UIView {
       this.btnUploadVideoText.textContent = label ? `Video: ${label.substring(0, 10)}...` : "Cambiar Video";
       this.btnResetRecord.disabled = false;
     } else {
+      this.exitCameraFullscreen();
+      if (this.emptyState) this.emptyState.style.display = '';
       this.cameraToolbar.style.display = "none";
       this.canvasWrapper?.classList.remove('has-video');
 
@@ -1268,7 +1403,9 @@ export class UIView {
 
       // Resetear indicador de señal
       this.signalBars.forEach(bar => { bar.className = "signal-bar"; });
-      this.signalLabel.textContent = "—";
+      if (this.signalLabel) {
+        this.signalLabel.textContent = "—";
+      }
     }
   }
 

@@ -117,17 +117,11 @@ export class CanvasView {
     }
     this.lastState = jumpState;
 
-    // 1. Si no hay landmarks, mostrar silueta fantasma de posicionamiento
+    // 1. Si no hay landmarks, simplemente salir (cámara limpia sin overlays)
     if (!landmarks || landmarks.length < 33) {
-      this.drawPositioningOverlay(width, height);
       return;
     }
 
-    // 2. Dibujar borde de estado (verde/rojo según visibilidad)
-    this.drawStatusBorder(width, height, avgVisibility);
-
-    // 3. Dibujar barra de confianza de pose (esquina superior derecha)
-    this.drawConfidenceBar(width, avgVisibility);
 
     // Obtener posición del centro de cadera
     const getX = (normX: number) => (this.isMirrored ? (1 - normX) * width : normX * width);
@@ -446,6 +440,8 @@ export class CanvasView {
     this.ctx.restore();
   }
 
+
+
   // ── Líneas baseline ─────────────────────────────────────────────────────
 
   private drawBaselineLines(
@@ -573,6 +569,7 @@ export class CanvasView {
     const leftHip = landmarks[23];
     const rightHip = landmarks[24];
     if (leftHip && rightHip) {
+      const hipCenterX = getX((leftHip.x + rightHip.x) / 2);
       const hipCenterY = ((leftHip.y + rightHip.y) / 2) * height;
 
       this.ctx.beginPath();

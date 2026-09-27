@@ -111,7 +111,7 @@ export class PoseModel {
       }
 
       this.isInitialized = true;
-      if (onProgress) onProgress(`¡MediaPipe Pose listo! (Modelo ${modelLabel})`);
+      if (onProgress) onProgress(`¡Detector listo! (Modelo ${modelLabel})`);
     } catch (error) {
       console.error("[PoseModel] Error crítico al inicializar MediaPipe Pose:", error);
       throw error;

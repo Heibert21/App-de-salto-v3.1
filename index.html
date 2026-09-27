@@ -8,10 +8,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>You Can Fly - Medidor de Salto Vertical</title>
-  <meta name="description" content="Aplicación web con MediaPipe Pose para medir la altura del salto vertical en tiempo real." />
+  <meta name="description"
+    content="Aplicación web con MediaPipe Pose para medir la altura del salto vertical en tiempo real." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Mono:wght@700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css" />
 </head>
 
@@ -22,7 +25,8 @@
     <div id="toast-container" class="toast-container"></div>
 
     <!-- Canvas de confeti para nuevos récords (fixed) -->
-    <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:99999;display:none;"></canvas>
+    <canvas id="confetti-canvas"
+      style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:99999;display:none;"></canvas>
 
     <!-- ═══════════════════════════════════════════════
          MODAL TIPS DE GRABACIÓN (antes de subir video)
@@ -70,7 +74,10 @@
         <ul class="video-tips-list">
           <li class="video-tip-item">
             <div class="tip-icon-wrap tip-icon-blue">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l4.553-2.525A1 1 0 0121 8.382v7.236a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                  d="M15 10l4.553-2.525A1 1 0 0121 8.382v7.236a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+              </svg>
             </div>
             <div class="tip-text">
               <strong>Distancia</strong>
@@ -79,7 +86,11 @@
           </li>
           <li class="video-tip-item">
             <div class="tip-icon-wrap tip-icon-gold">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5" />
+                <path
+                  d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+              </svg>
             </div>
             <div class="tip-text">
               <strong>Iluminación</strong>
@@ -88,7 +99,12 @@
           </li>
           <li class="video-tip-item">
             <div class="tip-icon-wrap tip-icon-cyan">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="15" rx="2" />
+                <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
+                <line x1="12" y1="12" x2="12" y2="16" />
+                <line x1="10" y1="14" x2="14" y2="14" />
+              </svg>
             </div>
             <div class="tip-text">
               <strong>Cuerpo completo</strong>
@@ -97,7 +113,10 @@
           </li>
           <li class="video-tip-item">
             <div class="tip-icon-wrap tip-icon-purple">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+              </svg>
             </div>
             <div class="tip-text">
               <strong>Ropa ajustada</strong>
@@ -106,7 +125,9 @@
           </li>
           <li class="video-tip-item">
             <div class="tip-icon-wrap tip-icon-green">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
             </div>
             <div class="tip-text">
               <strong>Salto limpio</strong>
@@ -118,7 +139,11 @@
         <div class="video-tips-footer">
           <button id="btn-tips-cancel" class="btn-tips-cancel">Cancelar</button>
           <button id="btn-tips-confirm" class="btn-tips-confirm">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
             Elegir video
           </button>
         </div>
@@ -133,7 +158,9 @@
       <div class="modal-content">
         <div class="modal-header">
           <h2>
-            <svg class="modal-hdr-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <svg class="modal-hdr-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
             Rutina de Entrenamiento
           </h2>
           <button id="btn-close-modal" class="btn-close-modal">&times;</button>
@@ -150,7 +177,12 @@
           <div class="modal-routine">
             <div class="routine-header">
               <h3>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:-2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  style="width:16px;height:16px;vertical-align:-2px;">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
                 Plan Recomendado
               </h3>
               <span id="modal-routine-level" class="routine-level-badge intermediate">Intermedio</span>
@@ -158,14 +190,23 @@
             <p class="routine-desc" id="modal-routine-desc">Realiza esta rutina para mejorar tu potencia reactiva:</p>
             <ul class="routine-list" id="modal-routine-exercises"></ul>
             <div class="routine-note">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-              <strong>Instrucciones:</strong> Entrena 2-3 veces por semana, descansa 48h entre sesiones y mídete para evaluar tu progreso.
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width:14px;height:14px;flex-shrink:0;">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+              <strong>Instrucciones:</strong> Entrena 2-3 veces por semana, descansa 48h entre sesiones y mídete para
+              evaluar tu progreso.
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button id="btn-modal-dismiss" class="btn btn-primary btn-full-width">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              style="width:16px;height:16px;">
+              <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
             ¡Listo, a entrenar!
           </button>
         </div>
@@ -173,7 +214,7 @@
     </div>
 
     <!-- ═══════════════════════════════════════════════
-         PANEL DE MÓVIL DEL ATLETA (Gestor de Atletas)
+         PANEL DE MÓVIL DEL ATLETA (Gestor y Ficha Bio-Pass)
     ═══════════════════════════════════════════════ -->
     <div id="athlete-profile-modal" class="athlete-profile-modal" style="display:none;" aria-hidden="true">
       <div class="athlete-modal-backdrop" id="athlete-modal-backdrop"></div>
@@ -185,33 +226,243 @@
         <div class="athlete-modal-header">
           <div class="athlete-modal-title-group">
             <div class="athlete-badge-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <rect x="3" y="4" width="18" height="16" rx="3" />
+                <circle cx="9" cy="10" r="2.5" />
+                <line x1="15" y1="8" x2="19" y2="8" />
+                <line x1="15" y1="12" x2="19" y2="12" />
+                <line x1="5" y1="16" x2="19" y2="16" />
+              </svg>
             </div>
             <div>
-              <h2 class="athlete-modal-title">Mis Atletas</h2>
-              <p class="athlete-modal-subtitle">Selecciona, gestiona y compara resultados</p>
+              <h2 class="athlete-modal-title">Ficha del Atleta</h2>
+              <p class="athlete-modal-subtitle">Bio-Pass · Telemetría y Ránking</p>
             </div>
           </div>
           <button id="btn-close-athlete-modal" class="btn-close-modal" aria-label="Cerrar panel">&times;</button>
         </div>
 
-        <!-- Pestañas de navegación: Lista vs Resultados -->
+        <!-- Pestañas de navegación: Ficha Bio-Pass vs Lista vs Ránking -->
         <div class="athlete-tabs-nav" id="athlete-tabs-nav">
-          <button type="button" id="tab-btn-roster" class="athlete-tab-nav-btn active">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <button type="button" id="tab-btn-biopass" class="athlete-tab-nav-btn active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="16" rx="3" />
+              <circle cx="9" cy="10" r="2.5" />
+              <line x1="15" y1="8" x2="19" y2="8" />
+              <line x1="15" y1="12" x2="19" y2="12" />
+              <line x1="5" y1="16" x2="19" y2="16" />
+            </svg>
+            <span>Ficha Bio-Pass</span>
+          </button>
+          <button type="button" id="tab-btn-roster" class="athlete-tab-nav-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
             <span>Mis Atletas</span>
             <span id="athlete-count-badge" class="tab-count-badge">0</span>
           </button>
           <button type="button" id="tab-btn-ranking" class="athlete-tab-nav-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span>Resultados & Ránking</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+            <span>Ránking</span>
           </button>
         </div>
 
         <div class="athlete-modal-body">
 
-          <!-- Vista: Lista de atletas (pantalla principal del panel) -->
-          <div id="athlete-roster-view">
+          <!-- ═══════════════════════════════════════════════
+               VISTA: FICHA BIO-PASS HOLOGRÁFICA (FUTURISTA)
+          ═══════════════════════════════════════════════ -->
+          <div id="athlete-biopass-view">
+            <div class="biopass-card">
+              <!-- Franja neón superior y watermark -->
+              <div class="biopass-holo-stripe"></div>
+              <div class="biopass-watermark-wrap">
+                <img src="/jumpman.png" alt="Jumpman Watermark" class="biopass-watermark-img" />
+              </div>
+
+              <!-- Barra de telemetría superior -->
+              <div class="biopass-top-bar">
+                <div class="biopass-live-indicator">
+                  <span class="biopass-pulse-dot"></span>
+                  <span class="biopass-live-text">BIO-PASS TELEMETRY</span>
+                </div>
+                <div class="biopass-code-badge" id="biopass-code-badge">
+                  #AT-001 // ACTIVO
+                </div>
+              </div>
+
+              <!-- Hero del Atleta -->
+              <div class="biopass-hero">
+                <div class="biopass-avatar-container">
+                  <div class="biopass-radar-rings"></div>
+                  <div class="biopass-avatar" id="biopass-avatar">AT</div>
+                  <div class="biopass-avatar-badge" id="biopass-avatar-badge">⚡</div>
+                </div>
+                <div class="biopass-hero-details">
+                  <div class="biopass-rank-tag-wrap">
+                    <span class="biopass-rank-tag" id="biopass-rank-tag">RANK: SKYWALKER // ÉLITE</span>
+                  </div>
+                  <h3 class="biopass-name" id="biopass-name">Atleta</h3>
+                  <div class="biopass-metrics-pills">
+                    <span class="biopass-pill"><strong id="biopass-weight">--</strong> kg</span>
+                    <span class="biopass-pill-dot">•</span>
+                    <span class="biopass-pill"><strong id="biopass-height">--</strong> cm</span>
+                    <span class="biopass-pill-dot">•</span>
+                    <span class="biopass-pill" id="biopass-bmi-tag">BMI --</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- HUD Biomecánico & Flight Score -->
+              <div class="biopass-hud-radar">
+                <div class="hud-radar-left">
+                  <div class="hud-radar-silhouette">
+                    <svg viewBox="0 0 60 90" class="hud-pose-svg">
+                      <circle cx="30" cy="10" r="6" class="hud-part-head" />
+                      <line x1="30" y1="16" x2="30" y2="46" class="hud-part-spine" />
+                      <line x1="30" y1="24" x2="14" y2="34" class="hud-part-limb" />
+                      <line x1="30" y1="24" x2="46" y2="34" class="hud-part-limb" />
+                      <line x1="30" y1="46" x2="20" y2="68" class="hud-part-limb" />
+                      <line x1="30" y1="46" x2="40" y2="68" class="hud-part-limb" />
+                      <line x1="20" y1="68" x2="14" y2="84" class="hud-part-limb" />
+                      <line x1="40" y1="68" x2="46" y2="84" class="hud-part-limb" />
+                      <circle cx="30" cy="24" r="2.5" class="hud-kp" />
+                      <circle cx="30" cy="46" r="3" class="hud-kp-center" />
+                      <circle cx="20" cy="68" r="2.5" class="hud-kp" />
+                      <circle cx="40" cy="68" r="2.5" class="hud-kp" />
+                      <circle cx="14" cy="84" r="2" class="hud-kp" />
+                      <circle cx="46" cy="84" r="2" class="hud-kp" />
+                    </svg>
+                    <div class="hud-scan-beam"></div>
+                  </div>
+                  <div class="hud-radar-info">
+                    <span class="hud-radar-title">TRACKING BIOMECÁNICO</span>
+                    <span class="hud-radar-sub" id="biopass-status-label">Cinemática en Tiempo Real</span>
+                  </div>
+                </div>
+
+                <div class="hud-flight-score-box">
+                  <span class="flight-score-label">FLIGHT SCORE</span>
+                  <div class="flight-score-hex">
+                    <span class="flight-score-val" id="biopass-score-val">--</span>
+                    <span class="flight-score-max">/100</span>
+                  </div>
+                  <span class="flight-score-status" id="biopass-score-status">EVALUACIÓN NIKE</span>
+                </div>
+              </div>
+
+              <!-- Matriz de Rendimiento: 4 Cajas Telemetría HUD -->
+              <div class="biopass-grid">
+                <!-- Récord Vertical -->
+                <div class="biopass-stat-box biopass-stat-record">
+                  <div class="stat-box-hdr">
+                    <span class="stat-box-icon">🏆</span>
+                    <span class="stat-box-title">RÉCORD MÁXIMO</span>
+                  </div>
+                  <div class="stat-box-value">
+                    <span class="stat-num-gold" id="biopass-record-val">0.0</span>
+                    <span class="stat-unit">cm</span>
+                  </div>
+                  <span class="stat-box-sub" id="biopass-record-sub">Marca personal histórica</span>
+                </div>
+
+                <!-- Hang Time -->
+                <div class="biopass-stat-box biopass-stat-hangtime">
+                  <div class="stat-box-hdr">
+                    <span class="stat-box-icon">⏱️</span>
+                    <span class="stat-box-title">HANG TIME</span>
+                  </div>
+                  <div class="stat-box-value">
+                    <span class="stat-num-cyan" id="biopass-hangtime-val">0.00</span>
+                    <span class="stat-unit">s</span>
+                  </div>
+                  <span class="stat-box-sub" id="biopass-hangtime-sub">Ref Jordan: 0.92s</span>
+                </div>
+
+                <!-- Potencia Muscular en Watts -->
+                <div class="biopass-stat-box biopass-stat-power">
+                  <div class="stat-box-hdr">
+                    <span class="stat-box-icon">⚡</span>
+                    <span class="stat-box-title">POTENCIA EXPLOSIVA</span>
+                  </div>
+                  <div class="stat-box-value">
+                    <span class="stat-num-volt" id="biopass-watts-val">0</span>
+                    <span class="stat-unit">W</span>
+                  </div>
+                  <span class="stat-box-sub" id="biopass-watts-ratio">0.0 W/kg (Fuerza Relativa)</span>
+                </div>
+
+                <!-- Último Salto -->
+                <div class="biopass-stat-box biopass-stat-last">
+                  <div class="stat-box-hdr">
+                    <span class="stat-box-icon">🎯</span>
+                    <span class="stat-box-title">ÚLTIMO SALTO</span>
+                  </div>
+                  <div class="stat-box-value">
+                    <span class="stat-num-white" id="biopass-last-val">0.0</span>
+                    <span class="stat-unit">cm</span>
+                  </div>
+                  <span class="stat-box-sub" id="biopass-total-jumps">Total: 0 saltos</span>
+                </div>
+              </div>
+
+              <!-- Mini Telemetría Láser (Sparkline de Últimos Saltos) -->
+              <div class="biopass-telemetry-section">
+                <div class="telemetry-header">
+                  <span class="telemetry-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                    </svg>
+                    HISTORIAL DE SALTO RECIENTE
+                  </span>
+                  <span class="telemetry-badge" id="biopass-consistency-badge">ACTIVO</span>
+                </div>
+                <div class="telemetry-bars-container" id="biopass-sparkline">
+                  <!-- Renderizado dinámico -->
+                </div>
+              </div>
+
+              <!-- Botones de Acción de la Ficha -->
+              <div class="biopass-actions-row">
+                <button type="button" id="btn-biopass-share" class="btn-biopass-action btn-share" title="Generar póster Nike para compartir">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                    <polyline points="16 6 12 2 8 6" />
+                    <line x1="12" y1="2" x2="12" y2="15" />
+                  </svg>
+                  <span>Póster Nike</span>
+                </button>
+
+                <button type="button" id="btn-biopass-edit" class="btn-biopass-action btn-edit" title="Editar datos físicos del atleta">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  </svg>
+                  <span>Editar Ficha</span>
+                </button>
+
+                <button type="button" id="btn-biopass-switch-roster" class="btn-biopass-action btn-switch" title="Ver lista completa de atletas">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                  <span>Mis Atletas</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Vista: Lista de atletas -->
+          <div id="athlete-roster-view" style="display:none;">
             <!-- Lista dinámica de atletas -->
             <div id="athlete-roster-list" class="athlete-roster-list">
               <!-- Las tarjetas de atletas se generan dinámicamente en JS -->
@@ -220,7 +471,10 @@
             <!-- Botón agregar nuevo atleta -->
             <button type="button" id="btn-add-new-athlete" class="btn-add-athlete">
               <div class="add-athlete-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
               </div>
               <span>Agregar nuevo atleta</span>
             </button>
@@ -257,23 +511,32 @@
               <!-- Nombre -->
               <div class="form-group">
                 <label class="form-label" for="athlete-name-input">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
                   Nombre del Atleta
                 </label>
-                <input type="text" id="athlete-name-input" class="athlete-name-input" placeholder="Ingresa nombre o apodo" maxlength="32" autocomplete="off" />
+                <input type="text" id="athlete-name-input" class="athlete-name-input"
+                  placeholder="Ingresa nombre o apodo" maxlength="32" autocomplete="off" />
               </div>
 
               <!-- Peso -->
               <div class="form-group">
                 <div class="label-with-unit">
                   <label class="form-label" for="athlete-weight-input">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                      <line x1="3" y1="6" x2="21" y2="6" />
+                      <path d="M16 10a4 4 0 01-8 0" />
+                    </svg>
                     Peso
                   </label>
                   <span class="label-hint">kg</span>
                 </div>
                 <div class="input-with-unit">
-                  <input type="number" id="athlete-weight-input" class="custom-input" min="30" max="250" step="0.5" placeholder="70" />
+                  <input type="number" id="athlete-weight-input" class="custom-input" min="30" max="250" step="0.5"
+                    placeholder="70" />
                   <span class="input-unit">kg</span>
                 </div>
                 <div class="quick-chips-grid" id="athlete-weight-chips">
@@ -289,13 +552,18 @@
               <div class="form-group">
                 <div class="label-with-unit">
                   <label class="form-label" for="athlete-height-modal-input">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><polyline points="8 5 12 1 16 5"/><polyline points="8 19 12 23 16 19"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="12" y1="1" x2="12" y2="23" />
+                      <polyline points="8 5 12 1 16 5" />
+                      <polyline points="8 19 12 23 16 19" />
+                    </svg>
                     Estatura
                   </label>
                   <span class="label-hint">cm</span>
                 </div>
                 <div class="input-with-unit">
-                  <input type="number" id="athlete-height-modal-input" class="custom-input" min="120" max="230" step="1" placeholder="172" />
+                  <input type="number" id="athlete-height-modal-input" class="custom-input" min="120" max="230" step="1"
+                    placeholder="172" />
                   <span class="input-unit">cm</span>
                 </div>
                 <div class="quick-chips-grid" id="athlete-height-chips">
@@ -312,16 +580,57 @@
         </div>
 
         <!-- Footer dinámico: cambia según la vista activa -->
-        <div class="athlete-modal-footer" id="athlete-modal-footer-roster">
-          <p class="athlete-footer-hint" id="roster-footer-hint">Toca un atleta para activarlo</p>
+        <div class="athlete-modal-footer" id="athlete-modal-footer-biopass">
+          <p class="athlete-footer-hint" id="biopass-footer-hint">Toca las pestañas arriba para gestionar o ver el ránking</p>
+        </div>
+        <div class="athlete-modal-footer" id="athlete-modal-footer-roster" style="display:none;">
+          <p class="athlete-footer-hint" id="roster-footer-hint">Toca un atleta para activarlo y ver su ficha</p>
         </div>
         <div class="athlete-modal-footer" id="athlete-modal-footer-form" style="display:none;">
           <button type="button" id="btn-cancel-athlete-form" class="btn-tips-cancel">
             Cancelar
           </button>
           <button type="button" id="btn-save-athlete-profile" class="btn-tips-confirm">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:17px;height:17px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              style="width:17px;height:17px;">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
             Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         MODAL PÓSTER COMPARTE NIKE (YOU CAN FLY)
+    ═══════════════════════════════════════════════ -->
+    <div id="poster-modal" class="poster-modal" style="display:none;" aria-hidden="true">
+      <div class="poster-modal-backdrop" id="poster-modal-backdrop"></div>
+      <div class="poster-modal-content">
+        <div class="poster-modal-header">
+          <div class="poster-modal-title-group">
+            <span class="poster-badge-icon">⚡</span>
+            <div>
+              <h3 class="poster-modal-title">Póster de Rendimiento</h3>
+              <p class="poster-modal-sub">Listo para guardar o compartir en Instagram / WhatsApp</p>
+            </div>
+          </div>
+          <button type="button" id="btn-close-poster" class="btn-close-modal">&times;</button>
+        </div>
+        <div class="poster-preview-body">
+          <div class="poster-preview-card" id="poster-preview-container">
+            <canvas id="poster-render-canvas" style="display:none;"></canvas>
+            <img id="poster-img-preview" alt="Póster del atleta" class="poster-img" />
+          </div>
+        </div>
+        <div class="poster-modal-footer">
+          <button type="button" id="btn-download-poster" class="btn btn-primary btn-full-width">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:17px;height:17px;">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Descargar Imagen HD
           </button>
         </div>
       </div>
@@ -338,7 +647,8 @@
         </div>
 
         <!-- Botón que lleva al panel de móvil del atleta -->
-        <button type="button" id="btn-open-athlete-profile" class="btn-athlete-chip" title="Ver perfil del atleta" aria-label="Abrir panel del atleta">
+        <button type="button" id="btn-open-athlete-profile" class="btn-athlete-chip" title="Ver perfil del atleta"
+          aria-label="Abrir panel del atleta">
           <div class="athlete-avatar-mini" id="header-athlete-avatar">AT</div>
           <div class="athlete-chip-info">
             <span class="athlete-chip-name" id="header-athlete-name">Atleta</span>
@@ -346,7 +656,8 @@
           </div>
         </button>
       </div>
-      <p class="tagline">MediaPipe Pose AI</p>
+
+      <p class="designer-credit">Designed by Jesica de São João</p>
     </header>
 
     <!-- ═══════════════════════════════════════════════
@@ -364,26 +675,33 @@
               <div class="pose-figure">
                 <svg class="pose-svg" viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">
                   <!-- Cabeza -->
-                  <circle cx="40" cy="12" r="8" fill="none" stroke="var(--cyan)" stroke-width="2.5" class="pose-part"/>
+                  <circle cx="40" cy="12" r="8" fill="none" stroke="var(--cyan)" stroke-width="2.5" class="pose-part" />
                   <!-- Cuerpo -->
-                  <line x1="40" y1="20" x2="40" y2="58" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round" class="pose-part"/>
+                  <line x1="40" y1="20" x2="40" y2="58" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round"
+                    class="pose-part" />
                   <!-- Brazo izq -->
-                  <line x1="40" y1="32" x2="18" y2="46" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" class="pose-part pose-arm-l"/>
+                  <line x1="40" y1="32" x2="18" y2="46" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"
+                    class="pose-part pose-arm-l" />
                   <!-- Brazo der -->
-                  <line x1="40" y1="32" x2="62" y2="46" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" class="pose-part pose-arm-r"/>
+                  <line x1="40" y1="32" x2="62" y2="46" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"
+                    class="pose-part pose-arm-r" />
                   <!-- Pierna izq -->
-                  <line x1="40" y1="58" x2="26" y2="88" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round" class="pose-part"/>
-                  <line x1="26" y1="88" x2="16" y2="108" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" class="pose-part"/>
+                  <line x1="40" y1="58" x2="26" y2="88" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round"
+                    class="pose-part" />
+                  <line x1="26" y1="88" x2="16" y2="108" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"
+                    class="pose-part" />
                   <!-- Pierna der -->
-                  <line x1="40" y1="58" x2="54" y2="88" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round" class="pose-part"/>
-                  <line x1="54" y1="88" x2="64" y2="108" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" class="pose-part"/>
+                  <line x1="40" y1="58" x2="54" y2="88" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round"
+                    class="pose-part" />
+                  <line x1="54" y1="88" x2="64" y2="108" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"
+                    class="pose-part" />
                   <!-- Keypoints -->
-                  <circle cx="40" cy="32" r="3" fill="var(--cyan)" class="kp kp-1"/>
-                  <circle cx="40" cy="58" r="3" fill="var(--cyan)" class="kp kp-2"/>
-                  <circle cx="18" cy="46" r="2.5" fill="var(--blue)" class="kp kp-3"/>
-                  <circle cx="62" cy="46" r="2.5" fill="var(--blue)" class="kp kp-4"/>
-                  <circle cx="26" cy="88" r="2.5" fill="var(--purple)" class="kp kp-5"/>
-                  <circle cx="54" cy="88" r="2.5" fill="var(--purple)" class="kp kp-6"/>
+                  <circle cx="40" cy="32" r="3" fill="var(--cyan)" class="kp kp-1" />
+                  <circle cx="40" cy="58" r="3" fill="var(--cyan)" class="kp kp-2" />
+                  <circle cx="18" cy="46" r="2.5" fill="var(--blue)" class="kp kp-3" />
+                  <circle cx="62" cy="46" r="2.5" fill="var(--blue)" class="kp kp-4" />
+                  <circle cx="26" cy="88" r="2.5" fill="var(--purple)" class="kp kp-5" />
+                  <circle cx="54" cy="88" r="2.5" fill="var(--purple)" class="kp kp-6" />
                 </svg>
                 <!-- Anillo de escaneo -->
                 <div class="scan-ring"></div>
@@ -397,7 +715,7 @@
                 <span class="dot"></span>
               </div>
             </div>
-            <p id="loading-text">Cargando MediaPipe Pose...</p>
+            <p id="loading-text">Iniciando IA...</p>
           </div>
 
           <div class="canvas-wrapper">
@@ -411,21 +729,32 @@
                 <span>EN VIVO</span>
               </div>
               <div class="camera-toolbar-actions">
-                <button type="button" id="btn-switch-camera" class="camera-tool-btn" title="Cambiar cámara frontal / trasera">
+                <button type="button" id="btn-switch-camera" class="camera-tool-btn"
+                  title="Cambiar cámara frontal / trasera">
                   <span class="btn-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 4v6h6"/><path d="M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                      <path d="M1 4v6h6" />
+                      <path d="M23 20v-6h-6" />
+                      <path d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15" />
+                    </svg>
                   </span>
                   <span class="btn-tool-label">Girar</span>
                 </button>
                 <button type="button" id="btn-toggle-mirror" class="camera-tool-btn" title="Modo espejo (invertir)">
                   <span class="btn-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v18M5 7l-2-2-2 2M1 5h4M5 17l-2 2-2-2M1 19h4M19 7l2-2 2 2M23 5h-4M19 17l2 2 2-2M23 19h-4"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                      <path
+                        d="M12 3v18M5 7l-2-2-2 2M1 5h4M5 17l-2 2-2-2M1 19h4M19 7l2-2 2 2M23 5h-4M19 17l2 2 2-2M23 19h-4" />
+                    </svg>
                   </span>
                   <span class="btn-tool-label">Espejo</span>
                 </button>
-                <button type="button" id="btn-stop-camera" class="camera-tool-btn btn-tool-danger" title="Detener cámara">
+                <button type="button" id="btn-stop-camera" class="camera-tool-btn btn-tool-danger"
+                  title="Detener cámara">
                   <span class="btn-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" />
+                    </svg>
                   </span>
                   <span class="btn-tool-label">Cerrar</span>
                 </button>
@@ -438,24 +767,32 @@
                 <svg class="jump-svg" viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <filter id="neon-glow" x="-40%" y="-40%" width="180%" height="180%">
-                      <feGaussianBlur stdDeviation="3" result="blur1"/>
-                      <feGaussianBlur stdDeviation="6" result="blur2"/>
+                      <feGaussianBlur stdDeviation="3" result="blur1" />
+                      <feGaussianBlur stdDeviation="6" result="blur2" />
                       <feMerge>
-                        <feMergeNode in="blur2"/>
-                        <feMergeNode in="blur1"/>
-                        <feMergeNode in="SourceGraphic"/>
+                        <feMergeNode in="blur2" />
+                        <feMergeNode in="blur1" />
+                        <feMergeNode in="SourceGraphic" />
                       </feMerge>
                     </filter>
                   </defs>
-                  <circle cx="50" cy="14" r="9" fill="none" stroke="#00F2FE" stroke-width="3" filter="url(#neon-glow)"/>
-                  <line x1="50" y1="23" x2="50" y2="60" stroke="#00F2FE" stroke-width="3" stroke-linecap="round" filter="url(#neon-glow)"/>
-                  <line x1="50" y1="34" x2="24" y2="22" stroke="#4FACFE" stroke-width="2.5" stroke-linecap="round" filter="url(#neon-glow)"/>
-                  <line x1="50" y1="34" x2="76" y2="22" stroke="#4FACFE" stroke-width="2.5" stroke-linecap="round" filter="url(#neon-glow)"/>
-                  <line x1="50" y1="60" x2="34" y2="82" stroke="#00F2FE" stroke-width="3" stroke-linecap="round" filter="url(#neon-glow)"/>
-                  <line x1="34" y1="82" x2="22" y2="70" stroke="#4FACFE" stroke-width="2.5" stroke-linecap="round" filter="url(#neon-glow)"/>
-                  <line x1="50" y1="60" x2="68" y2="85" stroke="#00F2FE" stroke-width="3" stroke-linecap="round" filter="url(#neon-glow)"/>
-                  <line x1="68" y1="85" x2="82" y2="76" stroke="#4FACFE" stroke-width="2.5" stroke-linecap="round" filter="url(#neon-glow)"/>
-                  <ellipse cx="50" cy="115" rx="28" ry="5" fill="#00F2FE" opacity="0.18" filter="url(#neon-glow)"/>
+                  <circle cx="50" cy="14" r="9" fill="none" stroke="#00F2FE" stroke-width="3"
+                    filter="url(#neon-glow)" />
+                  <line x1="50" y1="23" x2="50" y2="60" stroke="#00F2FE" stroke-width="3" stroke-linecap="round"
+                    filter="url(#neon-glow)" />
+                  <line x1="50" y1="34" x2="24" y2="22" stroke="#4FACFE" stroke-width="2.5" stroke-linecap="round"
+                    filter="url(#neon-glow)" />
+                  <line x1="50" y1="34" x2="76" y2="22" stroke="#4FACFE" stroke-width="2.5" stroke-linecap="round"
+                    filter="url(#neon-glow)" />
+                  <line x1="50" y1="60" x2="34" y2="82" stroke="#00F2FE" stroke-width="3" stroke-linecap="round"
+                    filter="url(#neon-glow)" />
+                  <line x1="34" y1="82" x2="22" y2="70" stroke="#4FACFE" stroke-width="2.5" stroke-linecap="round"
+                    filter="url(#neon-glow)" />
+                  <line x1="50" y1="60" x2="68" y2="85" stroke="#00F2FE" stroke-width="3" stroke-linecap="round"
+                    filter="url(#neon-glow)" />
+                  <line x1="68" y1="85" x2="82" y2="76" stroke="#4FACFE" stroke-width="2.5" stroke-linecap="round"
+                    filter="url(#neon-glow)" />
+                  <ellipse cx="50" cy="115" rx="28" ry="5" fill="#00F2FE" opacity="0.18" filter="url(#neon-glow)" />
                 </svg>
                 <div class="silhouette-shadow"></div>
               </div>
@@ -490,7 +827,9 @@
         <!-- Récord máximo -->
         <div class="stat-chip stat-chip-record card">
           <span class="stat-chip-label">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
             RÉCORD
           </span>
           <div class="stat-chip-value">
@@ -503,110 +842,62 @@
           </div>
           <p id="level-progress-label" class="level-progress-label">0 / 30 cm</p>
         </div>
-        <!-- Tiempo de vuelo -->
-        <div class="stat-chip">
-          <span class="stat-chip-label">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            VUELO
-          </span>
-          <span id="flight-time-text" class="stat-chip-num-cyan">-- s</span>
-        </div>
-        <!-- Desplazamiento ΔY -->
-        <div class="stat-chip">
-          <span class="stat-chip-label">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><polyline points="22 17 13 17 8 22 8 17 2 17 2 3 22 3 22 17"/></svg>
-            ΔY
-          </span>
-          <span id="displacement-text" class="stat-chip-num-blue">-- cm</span>
-        </div>
       </div>
 
-      <!-- ══════════════════════════════════════════
-           PANEL DE CONFIGURACIÓN DIRECTO (nuevo)
-      ══════════════════════════════════════════ -->
-      <div class="card config-panel">
-        <div class="config-panel-top">
-          <!-- Estatura -->
-          <div class="control-group">
-            <div class="height-header-row">
-              <label class="control-label" for="user-height-input">Estatura</label>
-              <span id="auto-height-badge" class="auto-height-badge" style="display:none;">✨ IA</span>
-            </div>
-            <div class="input-with-unit">
-              <input type="number" id="user-height-input" class="custom-input" min="120" max="230" value="172" placeholder="172" />
-              <span class="input-unit">cm</span>
-            </div>
-          </div>
-
-          <!-- Chips táctiles rápidos -->
-          <div class="mobile-height-chips" id="mobile-height-chips">
-            <button type="button" class="chip-btn" data-height="160">1.60m</button>
-            <button type="button" class="chip-btn" data-height="172">1.72m</button>
-            <button type="button" class="chip-btn" data-height="185">1.85m</button>
-            <button type="button" class="chip-btn" data-height="195">1.95m</button>
-          </div>
-        </div>
-
-        <div class="config-panel-divider"></div>
-
-        <div class="config-panel-bottom">
-          <div class="status-indicator-mini">
-            <span class="status-label">Suelo</span>
-            <strong id="baseline-status-text" class="status-locked">🔒 Fijado</strong>
-          </div>
-
-          <div class="status-indicator-mini">
-            <span class="status-label">Último Vuelo</span>
-            <strong id="last-jump-time">—</strong>
-          </div>
-
-          <div class="status-indicator-mini">
-            <span class="status-label">Señal Pose</span>
-            <div class="signal-quality-container" id="signal-quality">
-              <div class="signal-bars">
-                <span id="signal-bar-1" class="signal-bar"></span>
-                <span id="signal-bar-2" class="signal-bar"></span>
-                <span id="signal-bar-3" class="signal-bar"></span>
-              </div>
-              <strong id="signal-label" class="signal-text">—</strong>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- ══════════════════════════════════════════
            ACCIONES (zona pulgar — parte inferior)
       ══════════════════════════════════════════ -->
       <div class="actions-section">
-        <input type="file" id="video-file-input" accept="video/mp4,video/webm,video/ogg,video/quicktime" style="display:none;" />
+        <input type="file" id="video-file-input" accept="video/mp4,video/webm,video/ogg,video/quicktime"
+          style="display:none;" />
 
         <div class="actions-primary-group">
           <button id="btn-start-camera" class="btn-action-primary btn-action-camera">
             <span class="btn-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M23 7l-7 5 7 5V7z" />
+                <rect x="1" y="5" width="15" height="14" rx="2" />
+              </svg>
             </span>
             <span id="btn-start-camera-text">Medir con Cámara</span>
           </button>
 
           <button id="btn-upload-video" class="btn-action-primary btn-action-upload">
             <span class="btn-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
             </span>
             <span id="btn-upload-video-text">Subir Video</span>
           </button>
         </div>
 
         <div class="actions-secondary">
-          <button type="button" id="btn-open-athlete-sheet" class="btn-secondary-sm btn-athlete-quick" title="Ficha del Atleta">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <button type="button" id="btn-open-athlete-sheet" class="btn-secondary-sm btn-athlete-quick"
+            title="Ficha del Atleta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
             Atleta
           </button>
           <button id="btn-show-routine" class="btn-secondary-sm">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;">
+              <path d="M9 11l3 3L22 4" />
+              <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+            </svg>
             Rutina
           </button>
           <button id="btn-reset-record" class="btn-danger-sm" disabled>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+              <path d="M10 11v6M14 11v6" />
+              <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+            </svg>
             Récord
           </button>
         </div>

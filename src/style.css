@@ -144,6 +144,17 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+.designer-credit {
+  font-size: 0.8rem;
+  color: #FFFFFF;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  line-height: 1.2;
+  margin-top: 2px;
+  padding-left: 2px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
 /* Botón de acceso al panel de atleta en el header */
 .btn-athlete-chip {
   display: flex;
@@ -365,6 +376,115 @@ body {
 .camera-tool-btn.btn-tool-danger {
   border-color: rgba(255, 82, 82, 0.4);
   color: #FFA4A4;
+}
+
+/* ═══════════════════════════════════════════════
+   MODO PANTALLA COMPLETA (CÁMARA EN TIEMPO REAL)
+═══════════════════════════════════════════════ */
+body.camera-fullscreen {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
+body.camera-fullscreen .video-section {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  z-index: 9990 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #000 !important;
+  border-radius: 0 !important;
+}
+
+body.camera-fullscreen .video-card {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 0 !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  background: #000 !important;
+}
+
+body.camera-fullscreen .canvas-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  border-radius: 0 !important;
+  border: none !important;
+}
+
+body.camera-fullscreen #video-player,
+body.camera-fullscreen #output-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+
+/* Barra superior de cámara en pantalla completa */
+body.camera-fullscreen .camera-toolbar {
+  top: max(16px, env(safe-area-inset-top, 16px));
+  left: max(16px, env(safe-area-inset-left, 16px));
+  right: max(16px, env(safe-area-inset-right, 16px));
+  z-index: 20;
+}
+
+body.camera-fullscreen .camera-tool-btn {
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  border-radius: 14px;
+  background: rgba(11, 15, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+body.camera-fullscreen .camera-tool-btn.btn-tool-danger {
+  background: rgba(255, 59, 48, 0.3);
+  border-color: rgba(255, 59, 48, 0.6);
+  color: #FF6B6B;
+}
+
+body.camera-fullscreen .camera-live-badge {
+  padding: 6px 12px;
+  font-size: 0.72rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Indicador de estado flotante en la parte inferior de la pantalla completa */
+body.camera-fullscreen .state-indicator-section {
+  position: fixed !important;
+  bottom: max(24px, env(safe-area-inset-bottom, 24px)) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: calc(100% - 32px) !important;
+  max-width: 420px !important;
+  z-index: 9995 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none;
+}
+
+body.camera-fullscreen .state-indicator {
+  background: rgba(11, 15, 25, 0.85) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.65) !important;
+  padding: 12px 20px !important;
+  border-radius: 20px !important;
+}
+
+body.camera-fullscreen .state-indicator-text {
+  font-size: 0.95rem;
+}
+
+body.camera-fullscreen .live-num {
+  font-size: 2.4rem;
 }
 
 /* ── Estado Vacío (Empty State) ── */
@@ -673,10 +793,10 @@ body {
   to { transform: scale(1.02); }
 }
 
-/* ── Bento Grid de Estadísticas (3 Cards) ── */
+/* ── Fila de Récord Principal (Card Destacada) ── */
 .stats-row {
   display: grid;
-  grid-template-columns: 1.25fr 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 8px;
   width: 100%;
 }
@@ -1845,74 +1965,816 @@ body {
   overscroll-behavior: contain;
 }
 
-/* Tarjeta Hero del Atleta */
-.athlete-card-hero {
+/* ═══════════════════════════════════════════════════════════
+   FICHA BIO-PASS HOLOGRÁFICA DEL ATLETA (Estilo Futurista Nike / Cyber)
+═══════════════════════════════════════════════════════════ */
+.biopass-card {
+  position: relative;
+  border-radius: 20px;
+  background: radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.12) 0%, transparent 65%),
+              linear-gradient(165deg, rgba(14, 23, 42, 0.95) 0%, rgba(7, 11, 20, 0.98) 100%);
+  border: 1px solid rgba(0, 242, 254, 0.28);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6),
+              0 0 25px rgba(0, 242, 254, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Franja holográfica superior */
+.biopass-holo-stripe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #00F2FE 0%, #CEFF00 50%, #8B5CF6 100%);
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.8), 0 0 20px rgba(206, 255, 0, 0.5);
+}
+
+/* Marca de agua Jumpman en el fondo */
+.biopass-watermark-wrap {
+  position: absolute;
+  right: -15px;
+  bottom: 30px;
+  width: 170px;
+  height: 170px;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.biopass-watermark-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: invert(1);
+}
+
+/* Barra de telemetría superior */
+.biopass-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  z-index: 1;
+}
+
+.biopass-live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.biopass-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00E676;
+  box-shadow: 0 0 8px #00E676;
+  animation: biopassPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes biopassPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+.biopass-live-text {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: #00E676;
+  text-transform: uppercase;
+}
+
+.biopass-code-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--cyan);
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid rgba(0, 242, 254, 0.25);
+  border-radius: 4px;
+  padding: 2px 7px;
+  letter-spacing: 0.5px;
+}
+
+/* Hero del Atleta */
+.biopass-hero {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(0, 242, 254, 0.16);
-  border-radius: var(--radius-lg);
-  padding: 14px 16px;
-  box-shadow: var(--shadow-sm);
+  z-index: 1;
 }
 
-.athlete-hero-avatar {
-  width: 52px;
-  height: 52px;
+.biopass-avatar-container {
+  position: relative;
+  width: 62px;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Anillos radar giratorios alrededor del avatar */
+.biopass-radar-rings {
+  position: absolute;
+  inset: -4px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #00F2FE 0%, #8B5CF6 100%);
+  border: 1px dashed rgba(0, 242, 254, 0.45);
+  animation: hudRotate 16s linear infinite;
+  pointer-events: none;
+}
+
+.biopass-radar-rings::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(206, 255, 0, 0.25);
+  border-top-color: transparent;
+  border-left-color: transparent;
+  animation: hudRotate 9s linear infinite reverse;
+}
+
+@keyframes hudRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.biopass-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00F2FE 0%, #4FACFE 50%, #8B5CF6 100%);
   color: #070B14;
-  font-size: 1.25rem;
-  font-weight: 800;
+  font-size: 1.3rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
   display: flex;
   align-items: center;
   justify-content: center;
   letter-spacing: -0.5px;
-  flex-shrink: 0;
-  box-shadow: 0 0 16px rgba(0, 242, 254, 0.35);
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.45);
+  z-index: 1;
 }
 
-.athlete-hero-details {
+.biopass-avatar-badge {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 20px;
+  height: 20px;
+  background: #090E17;
+  border: 1.5px solid #CEFF00;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #CEFF00;
+  box-shadow: 0 0 8px rgba(206, 255, 0, 0.4);
+  z-index: 2;
+}
+
+.biopass-hero-details {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   min-width: 0;
 }
 
-.athlete-hero-name {
-  font-size: 1.12rem;
+.biopass-rank-tag-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.biopass-rank-tag {
+  font-size: 0.62rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 242, 254, 0.12);
+  color: var(--cyan);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.biopass-rank-tag.rank-elite {
+  background: rgba(206, 255, 0, 0.14);
+  color: #CEFF00;
+  border-color: rgba(206, 255, 0, 0.45);
+  box-shadow: 0 0 10px rgba(206, 255, 0, 0.25);
+}
+
+.biopass-rank-tag.rank-advanced {
+  background: rgba(255, 215, 0, 0.14);
+  color: var(--gold);
+  border-color: rgba(255, 215, 0, 0.4);
+}
+
+.biopass-rank-tag.rank-intermediate {
+  background: rgba(79, 172, 254, 0.14);
+  color: var(--blue);
+  border-color: rgba(79, 172, 254, 0.4);
+}
+
+.biopass-rank-tag.rank-beginner {
+  background: rgba(0, 242, 254, 0.1);
+  color: var(--cyan);
+  border-color: rgba(0, 242, 254, 0.25);
+}
+
+.biopass-name {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #FFFFFF;
+  letter-spacing: -0.01em;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+}
+
+.biopass-metrics-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.biopass-pill strong {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+.biopass-pill-dot {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── HUD Biomecánico y Flight Score ── */
+.biopass-hud-radar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 242, 254, 0.16);
+  border-radius: 14px;
+  padding: 10px 14px;
+  z-index: 1;
+}
+
+.hud-radar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hud-radar-silhouette {
+  position: relative;
+  width: 44px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 242, 254, 0.05);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.hud-pose-svg {
+  width: 32px;
+  height: 52px;
+  filter: drop-shadow(0 0 4px rgba(0, 242, 254, 0.7));
+}
+
+.hud-part-head {
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 2;
+}
+
+.hud-part-spine {
+  stroke: var(--cyan);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.hud-part-limb {
+  stroke: #4FACFE;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+.hud-kp {
+  fill: #CEFF00;
+}
+
+.hud-kp-center {
+  fill: var(--cyan);
+}
+
+/* Rayo láser de escaneo que barre la silueta */
+.hud-scan-beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #CEFF00, transparent);
+  box-shadow: 0 0 8px #CEFF00;
+  animation: scanBeam 2.2s ease-in-out infinite;
+}
+
+@keyframes scanBeam {
+  0%   { top: 0; opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.hud-radar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hud-radar-title {
+  font-size: 0.74rem;
   font-weight: 800;
   color: var(--text-primary);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.hud-radar-sub {
+  font-size: 0.65rem;
+  color: var(--cyan);
+  font-family: var(--font-mono);
+}
+
+/* Caja de Flight Score */
+.hud-flight-score-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(206, 255, 0, 0.08) 0%, rgba(0, 242, 254, 0.05) 100%);
+  border: 1px solid rgba(206, 255, 0, 0.35);
+  border-radius: 10px;
+  padding: 6px 10px;
+  min-width: 88px;
+  text-align: center;
+  box-shadow: 0 0 14px rgba(206, 255, 0, 0.1);
+}
+
+.flight-score-label {
+  font-size: 0.56rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: #CEFF00;
+  letter-spacing: 0.6px;
+}
+
+.flight-score-hex {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.flight-score-val {
+  font-size: 1.45rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  color: #CEFF00;
+  line-height: 1.1;
+  text-shadow: 0 0 12px rgba(206, 255, 0, 0.5);
+}
+
+.flight-score-max {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.flight-score-status {
+  font-size: 0.54rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-secondary);
+}
+
+/* ── Matriz de Rendimiento (Grid 2x2) ── */
+.biopass-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  z-index: 1;
+}
+
+.biopass-stat-box {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.biopass-stat-box:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 242, 254, 0.35);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.biopass-stat-record {
+  border-color: rgba(255, 215, 0, 0.3);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.biopass-stat-power {
+  border-color: rgba(206, 255, 0, 0.28);
+  background: linear-gradient(135deg, rgba(206, 255, 0, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.biopass-stat-hangtime {
+  border-color: rgba(0, 242, 254, 0.28);
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.stat-box-hdr {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stat-box-icon {
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
+.stat-box-title {
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.biopass-stat-record .stat-box-title { color: var(--gold); }
+.biopass-stat-power .stat-box-title { color: #CEFF00; }
+.biopass-stat-hangtime .stat-box-title { color: var(--cyan); }
+
+.stat-box-value {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  margin: 2px 0 1px;
+}
+
+.stat-num-gold {
+  font-family: var(--font-mono);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1.1;
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+}
+
+.stat-num-cyan {
+  font-family: var(--font-mono);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--cyan);
+  line-height: 1.1;
+  text-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+}
+
+.stat-num-volt {
+  font-family: var(--font-mono);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #CEFF00;
+  line-height: 1.1;
+  text-shadow: 0 0 12px rgba(206, 255, 0, 0.4);
+}
+
+.stat-num-white {
+  font-family: var(--font-mono);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.1;
+}
+
+.stat-unit {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.stat-box-sub {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.athlete-hero-tags {
+/* ── Telemetría de Saltos (Historial / Sparkline) ── */
+.biopass-telemetry-section {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1;
+}
+
+.telemetry-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
-.athlete-tag-level {
-  font-size: 0.64rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 2px 8px;
-  border-radius: 20px;
-  background: rgba(0, 242, 254, 0.12);
+.telemetry-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.66rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  letter-spacing: 0.4px;
+}
+
+.telemetry-title svg {
+  width: 12px;
+  height: 12px;
   color: var(--cyan);
-  border: 1px solid rgba(0, 242, 254, 0.25);
 }
 
-.athlete-tag-stat {
-  font-size: 0.72rem;
-  color: var(--gold);
-  font-weight: 700;
+.telemetry-badge {
   font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #00E676;
+  background: rgba(0, 230, 118, 0.12);
+  border: 1px solid rgba(0, 230, 118, 0.3);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+.telemetry-bars-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 48px;
+  padding: 4px 6px 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.telemetry-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  gap: 3px;
+}
+
+.telemetry-bar-fill {
+  width: 100%;
+  max-width: 22px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, #CEFF00 0%, #00F2FE 100%);
+  box-shadow: 0 0 8px rgba(0, 242, 254, 0.3);
+  transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  min-height: 4px;
+}
+
+.telemetry-bar-col.is-peak .telemetry-bar-fill {
+  background: linear-gradient(180deg, #FFD700 0%, #FFA000 100%);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.telemetry-bar-val {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.telemetry-bar-idx {
+  font-size: 0.52rem;
+  color: var(--text-muted);
+}
+
+.telemetry-empty-hint {
+  width: 100%;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  padding: 8px 0;
+  font-style: italic;
+}
+
+/* ── Botones de Acción de la Ficha ── */
+.biopass-actions-row {
+  display: flex;
+  gap: 8px;
+  z-index: 1;
+  margin-top: 2px;
+}
+
+.btn-biopass-action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.btn-biopass-action svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.btn-biopass-action.btn-share {
+  background: linear-gradient(135deg, rgba(206, 255, 0, 0.16) 0%, rgba(0, 242, 254, 0.12) 100%);
+  border-color: rgba(206, 255, 0, 0.4);
+  color: #CEFF00;
+  box-shadow: 0 0 12px rgba(206, 255, 0, 0.15);
+}
+
+.btn-biopass-action.btn-share:hover {
+  background: linear-gradient(135deg, rgba(206, 255, 0, 0.25) 0%, rgba(0, 242, 254, 0.2) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 0 16px rgba(206, 255, 0, 0.3);
+}
+
+.btn-biopass-action.btn-edit {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+}
+
+.btn-biopass-action.btn-edit:hover {
+  background: rgba(0, 242, 254, 0.12);
+  border-color: rgba(0, 242, 254, 0.35);
+  color: var(--cyan);
+}
+
+.btn-biopass-action.btn-switch {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+.btn-biopass-action.btn-switch:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL PÓSTER OFICIAL YOU CAN FLY (SHAREABLE CARD)
+═══════════════════════════════════════════════════════════ */
+.poster-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10005;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.poster-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 7, 18, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  cursor: pointer;
+}
+
+.poster-modal-content {
+  position: relative;
+  background: linear-gradient(165deg, rgba(13, 22, 44, 0.98) 0%, rgba(7, 11, 20, 0.99) 100%);
+  border: 1px solid rgba(206, 255, 0, 0.35);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(206, 255, 0, 0.15);
+  animation: posterZoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes posterZoom {
+  from { transform: scale(0.92); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.poster-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.poster-modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.poster-badge-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.poster-modal-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.poster-modal-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+.poster-preview-body {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.poster-preview-card {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.poster-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.poster-modal-footer {
+  padding: 12px 18px calc(16px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(7, 11, 20, 0.95);
 }
 
 /* Formulario */
@@ -2001,68 +2863,6 @@ body {
   box-shadow: 0 0 10px rgba(0, 242, 254, 0.25);
 }
 
-/* Tarjeta Biomecánica */
-.athlete-bio-card {
-  background: rgba(0, 242, 254, 0.03);
-  border: 1px solid rgba(0, 242, 254, 0.14);
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.bio-card-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.74rem;
-  font-weight: 700;
-  color: var(--cyan);
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-}
-
-.bio-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 10px;
-}
-
-.bio-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  padding: 8px 10px;
-}
-
-.bio-label {
-  font-size: 0.62rem;
-  color: var(--text-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.bio-value {
-  font-family: var(--font-mono);
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--text-primary);
-}
-
-.bio-highlight {
-  color: var(--cyan);
-}
-
-.bio-sub {
-  font-size: 0.65rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
 /* Footer del panel móvil */
 .athlete-modal-footer {
   display: flex;
@@ -2077,31 +2877,38 @@ body {
   text-align: center;
   font-size: 0.74rem;
   color: var(--text-muted);
-  padding: 8px 0;
+  padding: 6px 0;
 }
 
-/* ── Pestañas del Panel de Atletas ── */
+/* ── Pestañas del Panel de Atletas (3 Tabs) ── */
 .athlete-tabs-nav {
   display: flex;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.45);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 4px 16px;
-  gap: 8px;
+  padding: 4px 12px;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.athlete-tabs-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .athlete-tab-nav-btn {
   flex: 1;
+  min-width: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 10px;
+  gap: 5px;
+  padding: 9px 8px;
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
   color: var(--text-muted);
   font-family: var(--font-sans);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -2109,8 +2916,8 @@ body {
 }
 
 .athlete-tab-nav-btn svg {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
 }
 
@@ -2121,20 +2928,22 @@ body {
 .athlete-tab-nav-btn.active {
   color: var(--cyan);
   border-bottom-color: var(--cyan);
-  background: rgba(0, 242, 254, 0.05);
+  background: rgba(0, 242, 254, 0.08);
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  text-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
 }
 
 .tab-count-badge {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   background: rgba(255, 255, 255, 0.1);
-  padding: 1px 6px;
+  padding: 1px 5px;
   border-radius: 10px;
   color: var(--text-primary);
+  font-family: var(--font-mono);
 }
 
 .athlete-tab-nav-btn.active .tab-count-badge {
-  background: rgba(0, 242, 254, 0.2);
+  background: rgba(0, 242, 254, 0.25);
   color: var(--cyan);
 }
 
