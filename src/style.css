@@ -2380,25 +2380,25 @@ body.camera-fullscreen .live-num {
   color: var(--text-secondary);
 }
 
-/* ── Matriz de Rendimiento (Grid 2x2) ── */
+/* ── Matriz de Rendimiento (Grid 2 Columnas) ── */
 .biopass-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 12px;
   z-index: 1;
 }
 
 .biopass-stat-box {
   background: rgba(255, 255, 255, 0.025);
   border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 12px;
-  padding: 10px 12px;
+  border-radius: 14px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .biopass-stat-box:hover {
@@ -2409,82 +2409,61 @@ body.camera-fullscreen .live-num {
 
 .biopass-stat-record {
   border-color: rgba(255, 215, 0, 0.3);
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.05);
 }
 
-.biopass-stat-power {
-  border-color: rgba(206, 255, 0, 0.28);
-  background: linear-gradient(135deg, rgba(206, 255, 0, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-}
-
-.biopass-stat-hangtime {
-  border-color: rgba(0, 242, 254, 0.28);
-  background: linear-gradient(135deg, rgba(0, 242, 254, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+.biopass-stat-last {
+  border-color: rgba(0, 242, 254, 0.25);
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  box-shadow: 0 4px 20px rgba(0, 242, 254, 0.04);
 }
 
 .stat-box-hdr {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .stat-box-icon {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   line-height: 1;
 }
 
 .stat-box-title {
-  font-size: 0.62rem;
+  font-size: 0.65rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
   color: var(--text-muted);
 }
 
 .biopass-stat-record .stat-box-title { color: var(--gold); }
-.biopass-stat-power .stat-box-title { color: #CEFF00; }
-.biopass-stat-hangtime .stat-box-title { color: var(--cyan); }
+.biopass-stat-last .stat-box-title { color: var(--cyan); }
 
 .stat-box-value {
   display: flex;
   align-items: baseline;
-  gap: 3px;
-  margin: 2px 0 1px;
+  gap: 4px;
+  margin: 4px 0 2px;
 }
 
 .stat-num-gold {
   font-family: var(--font-mono);
-  font-size: 1.35rem;
+  font-size: 1.55rem;
   font-weight: 800;
   color: var(--gold);
   line-height: 1.1;
-  text-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
-}
-
-.stat-num-cyan {
-  font-family: var(--font-mono);
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--cyan);
-  line-height: 1.1;
-  text-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
-}
-
-.stat-num-volt {
-  font-family: var(--font-mono);
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: #CEFF00;
-  line-height: 1.1;
-  text-shadow: 0 0 12px rgba(206, 255, 0, 0.4);
+  text-shadow: 0 0 14px rgba(255, 215, 0, 0.45);
 }
 
 .stat-num-white {
   font-family: var(--font-mono);
-  font-size: 1.35rem;
+  font-size: 1.55rem;
   font-weight: 800;
   color: #FFFFFF;
   line-height: 1.1;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
 }
 
 .stat-unit {

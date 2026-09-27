@@ -129,10 +129,6 @@ export class UIView {
   private biopassScoreStatus: HTMLElement | null = null;
   private biopassRecordVal: HTMLElement | null = null;
   private biopassRecordSub: HTMLElement | null = null;
-  private biopassHangtimeVal: HTMLElement | null = null;
-  private biopassHangtimeSub: HTMLElement | null = null;
-  private biopassWattsVal: HTMLElement | null = null;
-  private biopassWattsRatio: HTMLElement | null = null;
   private biopassLastVal: HTMLElement | null = null;
   private biopassTotalJumps: HTMLElement | null = null;
   private biopassSparkline: HTMLElement | null = null;
@@ -148,6 +144,7 @@ export class UIView {
   private btnClosePoster: HTMLElement | null = null;
   private btnDownloadPoster: HTMLButtonElement | null = null;
   private posterImgPreview: HTMLImageElement | null = null;
+  private posterCanvas: HTMLCanvasElement | null = null;
 
   private formAvatarPreview: HTMLElement | null = null;
   private formHeaderNamePreview: HTMLElement | null = null;
@@ -334,10 +331,6 @@ export class UIView {
     this.biopassScoreStatus = document.getElementById("biopass-score-status");
     this.biopassRecordVal = document.getElementById("biopass-record-val");
     this.biopassRecordSub = document.getElementById("biopass-record-sub");
-    this.biopassHangtimeVal = document.getElementById("biopass-hangtime-val");
-    this.biopassHangtimeSub = document.getElementById("biopass-hangtime-sub");
-    this.biopassWattsVal = document.getElementById("biopass-watts-val");
-    this.biopassWattsRatio = document.getElementById("biopass-watts-ratio");
     this.biopassLastVal = document.getElementById("biopass-last-val");
     this.biopassTotalJumps = document.getElementById("biopass-total-jumps");
     this.biopassSparkline = document.getElementById("biopass-sparkline");
@@ -353,6 +346,7 @@ export class UIView {
     this.btnClosePoster = document.getElementById("btn-close-poster");
     this.btnDownloadPoster = document.getElementById("btn-download-poster") as HTMLButtonElement | null;
     this.posterImgPreview = document.getElementById("poster-img-preview") as HTMLImageElement | null;
+    this.posterCanvas = document.getElementById("poster-render-canvas") as HTMLCanvasElement | null;
 
     this.formAvatarPreview = document.getElementById("form-avatar-preview");
     this.formHeaderNamePreview = document.getElementById("form-header-name-preview");
@@ -499,14 +493,42 @@ export class UIView {
       }
     });
 
-    // ── Bindings para el Panel Móvil de Atleta ──
+    // ── Bindings para el Panel Móvil de Atleta y Ficha Bio-Pass ──
     this.savedCallbacks = callbacks;
 
+    if (this.tabBtnBiopass) {
+      this.tabBtnBiopass.addEventListener("click", () => this.switchAthleteTab('biopass'));
+    }
     if (this.tabBtnRoster) {
       this.tabBtnRoster.addEventListener("click", () => this.switchAthleteTab('roster'));
     }
     if (this.tabBtnRanking) {
       this.tabBtnRanking.addEventListener("click", () => this.switchAthleteTab('ranking'));
+    }
+
+    // Acciones directas dentro de la Ficha Bio-Pass
+    if (this.btnBiopassShare) {
+      this.btnBiopassShare.addEventListener("click", () => this.openPosterModal());
+    }
+    if (this.btnBiopassEdit) {
+      this.btnBiopassEdit.addEventListener("click", () => {
+        const active = this.athleteRoster.find(a => a.id === this.activeAthleteId) ?? (this.athleteRoster[0] ?? null);
+        this.showAthleteForm(active);
+      });
+    }
+    if (this.btnBiopassSwitchRoster) {
+      this.btnBiopassSwitchRoster.addEventListener("click", () => this.switchAthleteTab('roster'));
+    }
+
+    // Acciones del modal Póster Nike
+    if (this.btnClosePoster) {
+      this.btnClosePoster.addEventListener("click", () => this.closePosterModal());
+    }
+    if (this.posterModalBackdrop) {
+      this.posterModalBackdrop.addEventListener("click", () => this.closePosterModal());
+    }
+    if (this.btnDownloadPoster) {
+      this.btnDownloadPoster.addEventListener("click", () => this.downloadPoster());
     }
 
     const openAthleteModalHandler = () => {
@@ -540,10 +562,14 @@ export class UIView {
       });
     }
 
-    // Botón: cancelar formulario → volver a la lista
+    // Botón: cancelar formulario → volver a la ficha o lista
     if (this.btnCancelAthleteForm) {
       this.btnCancelAthleteForm.addEventListener("click", () => {
-        this.showAthleteRoster();
+        if (this.athleteRoster.length > 0) {
+          this.switchAthleteTab('biopass');
+        } else {
+          this.switchAthleteTab('roster');
+        }
       });
     }
 
@@ -593,9 +619,9 @@ export class UIView {
               const idx = this.athleteRoster.findIndex(a => a.id === editId);
               if (idx >= 0) this.athleteRoster[idx] = updated;
               this.applyActiveAthlete(callbacks);
-              this.showAthleteRoster();
               this.renderRosterList(callbacks);
-              this.showToast("✅ Atleta actualizado", 'success');
+              this.switchAthleteTab('biopass');
+              this.showToast("✅ Ficha actualizada", 'success');
             })
             .catch(() => this.showToast("❌ Error al guardar. Revisa tu conexión.", 'warning'));
         } else {
@@ -607,9 +633,9 @@ export class UIView {
               this.activeAthleteId = created.id;
               this.saveActiveId();
               this.applyActiveAthlete(callbacks);
-              this.showAthleteRoster();
               this.renderRosterList(callbacks);
-              this.showToast("✅ Atleta guardado", 'success');
+              this.switchAthleteTab('biopass');
+              this.showToast("✅ Ficha Bio-Pass creada", 'success');
             })
             .catch(() => this.showToast("❌ Error al guardar. Revisa tu conexión.", 'warning'));
         }
@@ -671,6 +697,9 @@ export class UIView {
     }
     stats.totalJumps = (stats.totalJumps || 0) + 1;
     stats.lastJumpDate = new Date().toLocaleDateString();
+    if (!stats.jumpHistory) stats.jumpHistory = [];
+    stats.jumpHistory.push(jumpCm);
+    if (stats.jumpHistory.length > 10) stats.jumpHistory.shift();
     UIView.saveAthleteStats(this.activeAthleteId, stats);
 
     // Actualizar visualizaciones si hay callbacks guardados
@@ -678,6 +707,7 @@ export class UIView {
       this.renderRosterList(this.savedCallbacks);
       this.renderRankingList(this.savedCallbacks);
     }
+    this.renderBiopass();
   }
 
   /**
@@ -736,6 +766,9 @@ export class UIView {
         </div>
         <span class="roster-card-active-badge">Activo</span>
         <div class="roster-card-actions">
+          <button class="roster-action-btn roster-view-biopass" title="Ver Ficha Bio-Pass" aria-label="Ver Ficha Bio-Pass">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2.5"/><line x1="15" y1="8" x2="19" y2="8"/><line x1="15" y1="12" x2="19" y2="12"/></svg>
+          </button>
           <button class="roster-action-btn roster-edit" title="Editar" aria-label="Editar atleta">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
@@ -744,7 +777,7 @@ export class UIView {
           </button>
         </div>`;
 
-      // Tap en la tarjeta = activar atleta
+      // Tap en la tarjeta = activar atleta y ver su ficha
       card.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
         if (target.closest('.roster-action-btn')) return;
@@ -754,6 +787,18 @@ export class UIView {
         this.renderRosterList(callbacks);
         this.renderRankingList(callbacks);
         this.showToast(`✅ ${athlete.name} activado`, 'success');
+        this.switchAthleteTab('biopass');
+      });
+
+      // Botón ver ficha
+      card.querySelector('.roster-view-biopass')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.activeAthleteId = athlete.id;
+        this.saveActiveId();
+        this.applyActiveAthlete(callbacks);
+        this.renderRosterList(callbacks);
+        this.renderRankingList(callbacks);
+        this.switchAthleteTab('biopass');
       });
 
       // Botón editar
@@ -854,6 +899,7 @@ export class UIView {
           this.renderRankingList(callbacks);
           this.showToast(`✅ ${item.athlete.name} seleccionado`, 'success');
         }
+        this.switchAthleteTab('biopass');
       });
 
       this.athleteRankingList!.appendChild(card);
@@ -861,27 +907,46 @@ export class UIView {
   }
 
   // ─────────────────────────────────────────────────────────────
-  //  ROSTER: cambio entre pestañas (Atletas vs Resultados)
+  //  ROSTER: cambio entre pestañas (Ficha vs Atletas vs Ránking)
   // ─────────────────────────────────────────────────────────────
-  private switchAthleteTab(tab: 'roster' | 'ranking'): void {
-    if (tab === 'roster') {
+  private switchAthleteTab(tab: 'biopass' | 'roster' | 'ranking'): void {
+    if (tab === 'biopass') {
+      if (this.tabBtnBiopass) this.tabBtnBiopass.classList.add('active');
+      if (this.tabBtnRoster) this.tabBtnRoster.classList.remove('active');
+      if (this.tabBtnRanking) this.tabBtnRanking.classList.remove('active');
+      if (this.athleteBiopassView) this.athleteBiopassView.style.display = '';
+      if (this.athleteRosterView) this.athleteRosterView.style.display = 'none';
+      if (this.athleteRankingView) this.athleteRankingView.style.display = 'none';
+      if (this.athleteFormView) this.athleteFormView.style.display = 'none';
+      if (this.footerBiopass) this.footerBiopass.style.display = '';
+      if (this.footerRoster) this.footerRoster.style.display = 'none';
+      if (this.footerForm) this.footerForm.style.display = 'none';
+      this.renderBiopass();
+    } else if (tab === 'roster') {
+      if (this.tabBtnBiopass) this.tabBtnBiopass.classList.remove('active');
       if (this.tabBtnRoster) this.tabBtnRoster.classList.add('active');
       if (this.tabBtnRanking) this.tabBtnRanking.classList.remove('active');
+      if (this.athleteBiopassView) this.athleteBiopassView.style.display = 'none';
       if (this.athleteRosterView) this.athleteRosterView.style.display = '';
       if (this.athleteRankingView) this.athleteRankingView.style.display = 'none';
       if (this.athleteFormView) this.athleteFormView.style.display = 'none';
+      if (this.footerBiopass) this.footerBiopass.style.display = 'none';
       if (this.footerRoster) this.footerRoster.style.display = '';
       if (this.footerForm) this.footerForm.style.display = 'none';
-      if (this.rosterFooterHint) this.rosterFooterHint.textContent = 'Toca un atleta para activarlo';
+      if (this.rosterFooterHint) this.rosterFooterHint.textContent = 'Toca un atleta para ver su ficha y activarlo';
+      if (this.savedCallbacks) this.renderRosterList(this.savedCallbacks);
     } else {
+      if (this.tabBtnBiopass) this.tabBtnBiopass.classList.remove('active');
       if (this.tabBtnRoster) this.tabBtnRoster.classList.remove('active');
       if (this.tabBtnRanking) this.tabBtnRanking.classList.add('active');
+      if (this.athleteBiopassView) this.athleteBiopassView.style.display = 'none';
       if (this.athleteRosterView) this.athleteRosterView.style.display = 'none';
       if (this.athleteRankingView) this.athleteRankingView.style.display = '';
       if (this.athleteFormView) this.athleteFormView.style.display = 'none';
+      if (this.footerBiopass) this.footerBiopass.style.display = 'none';
       if (this.footerRoster) this.footerRoster.style.display = '';
       if (this.footerForm) this.footerForm.style.display = 'none';
-      if (this.rosterFooterHint) this.rosterFooterHint.textContent = 'Toca un atleta para activarlo';
+      if (this.rosterFooterHint) this.rosterFooterHint.textContent = 'Toca un atleta para ver su ficha y activarlo';
       if (this.savedCallbacks) this.renderRankingList(this.savedCallbacks);
     }
   }
@@ -890,21 +955,21 @@ export class UIView {
   //  ROSTER: navegación entre vistas (lista ↔ formulario)
   // ─────────────────────────────────────────────────────────────
   private showAthleteRoster(): void {
-    if (this.athleteRosterView) this.athleteRosterView.style.display = '';
-    if (this.athleteRankingView) this.athleteRankingView.style.display = 'none';
-    if (this.athleteFormView) this.athleteFormView.style.display = 'none';
-    if (this.footerRoster) this.footerRoster.style.display = '';
-    if (this.footerForm) this.footerForm.style.display = 'none';
-    if (this.tabBtnRoster) this.tabBtnRoster.classList.add('active');
-    if (this.tabBtnRanking) this.tabBtnRanking.classList.remove('active');
+    this.switchAthleteTab('roster');
   }
 
   private showAthleteForm(athlete: { id: string; name: string; weightKg: number; heightCm: number } | null): void {
+    if (this.athleteBiopassView) this.athleteBiopassView.style.display = 'none';
     if (this.athleteRosterView) this.athleteRosterView.style.display = 'none';
     if (this.athleteRankingView) this.athleteRankingView.style.display = 'none';
     if (this.athleteFormView) this.athleteFormView.style.display = '';
+    if (this.footerBiopass) this.footerBiopass.style.display = 'none';
     if (this.footerRoster) this.footerRoster.style.display = 'none';
     if (this.footerForm) this.footerForm.style.display = '';
+
+    if (this.tabBtnBiopass) this.tabBtnBiopass.classList.remove('active');
+    if (this.tabBtnRoster) this.tabBtnRoster.classList.remove('active');
+    if (this.tabBtnRanking) this.tabBtnRanking.classList.remove('active');
 
     // Pre-poblar formulario
     if (this.athleteEditId) this.athleteEditId.value = athlete ? athlete.id : '';
@@ -950,6 +1015,7 @@ export class UIView {
     if (stats.lastJumpCm > 0 && this.lastJumpTimeText) {
       this.lastJumpTimeText.textContent = `Último salto: ${stats.lastJumpCm.toFixed(1)} cm`;
     }
+    this.renderBiopass();
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -998,12 +1064,20 @@ export class UIView {
    */
   public openAthleteModal(): void {
     if (!this.athleteProfileModal) return;
-    // Mostrar vista de lista y renderizarla
-    this.showAthleteRoster();
-    // Necesitamos callbacks para renderizar la lista → diferido al bindEvents
     this.athleteProfileModal.style.display = "flex";
     this.athleteProfileModal.setAttribute("aria-hidden", "false");
-    // Inicializar header si hay atleta activo
+
+    if (this.savedCallbacks) {
+      this.renderRosterList(this.savedCallbacks);
+      this.renderRankingList(this.savedCallbacks);
+    }
+
+    if (this.athleteRoster.length > 0) {
+      this.switchAthleteTab('biopass');
+    } else {
+      this.switchAthleteTab('roster');
+    }
+
     const active = this.athleteRoster.find(a => a.id === this.activeAthleteId);
     if (active) this.updateAthleteHeader(active.name);
   }
@@ -1015,7 +1089,514 @@ export class UIView {
     if (!this.athleteProfileModal) return;
     this.athleteProfileModal.style.display = "none";
     this.athleteProfileModal.setAttribute("aria-hidden", "true");
-    this.showAthleteRoster(); // reset a lista para próxima apertura
+  }
+
+  /**
+   * Renderiza todos los datos holográficos y telemetría de la Ficha Bio-Pass
+   */
+  public renderBiopass(): void {
+    if (!this.athleteBiopassView) return;
+
+    let athlete = this.athleteRoster.find(a => a.id === this.activeAthleteId);
+    if (!athlete && this.athleteRoster.length > 0) {
+      athlete = this.athleteRoster[0];
+      this.activeAthleteId = athlete.id;
+      this.saveActiveId();
+    }
+
+    if (!athlete) {
+      if (this.biopassName) this.biopassName.textContent = "Sin atleta";
+      if (this.biopassAvatar) this.biopassAvatar.textContent = "AT";
+      if (this.biopassWeight) this.biopassWeight.textContent = "--";
+      if (this.biopassHeight) this.biopassHeight.textContent = "--";
+      if (this.biopassBmiTag) this.biopassBmiTag.textContent = "BMI --";
+      if (this.biopassRecordVal) this.biopassRecordVal.textContent = "0.0";
+      if (this.biopassLastVal) this.biopassLastVal.textContent = "0.0";
+      if (this.biopassScoreVal) this.biopassScoreVal.textContent = "--";
+      if (this.biopassSparkline) {
+        this.biopassSparkline.innerHTML = '<div class="telemetry-empty-hint">Agrega un atleta para ver su telemetría</div>';
+      }
+      return;
+    }
+
+    const initials = this.getInitials(athlete.name);
+    const stats = UIView.getAthleteStats(athlete.id);
+    const weightKg = athlete.weightKg;
+    const heightCm = athlete.heightCm;
+    const heightM = heightCm / 100;
+    const bmi = heightM > 0 ? (weightKg / (heightM * heightM)).toFixed(1) : "--";
+
+    // Flight Score (0 a 99)
+    let score = 0;
+    let scoreLabel = "EVALUACIÓN NIKE";
+    if (stats.recordCm > 0) {
+      const heightPart = Math.min(80, (stats.recordCm / 75) * 80);
+      const jumpsPart = Math.min(19, (stats.totalJumps || 1) * 2);
+      score = Math.round(Math.min(99, heightPart + jumpsPart));
+
+      if (score >= 90) scoreLabel = "ÉLITE AIR JORDAN 👑";
+      else if (score >= 75) scoreLabel = "ALTO RENDIMIENTO ⚡";
+      else if (score >= 60) scoreLabel = "NIVEL PRO 🎯";
+      else scoreLabel = "PROSPECTO EN ALZA 🚀";
+    }
+
+    // Nivel & Rank
+    const levelInfo = UIView.getLevelInfo(stats.recordCm);
+    let rankTagText = "RANK: ROOKIE // PRINCIPIANTE";
+    let rankClass = "rank-beginner";
+    let avatarBadgeText = "🌱";
+
+    if (levelInfo.class === 'elite') {
+      rankTagText = "RANK: SKYWALKER // ÉLITE";
+      rankClass = "rank-elite";
+      avatarBadgeText = "👑";
+    } else if (levelInfo.class === 'advanced') {
+      rankTagText = "RANK: PRO // AVANZADO";
+      rankClass = "rank-advanced";
+      avatarBadgeText = "⚡";
+    } else if (levelInfo.class === 'intermediate') {
+      rankTagText = "RANK: RISING // INTERMEDIO";
+      rankClass = "rank-intermediate";
+      avatarBadgeText = "🔥";
+    }
+
+    // Actualizar elementos DOM de la Ficha
+    if (this.biopassCodeBadge) {
+      const codeId = athlete.id.slice(-4).toUpperCase();
+      this.biopassCodeBadge.textContent = `#AT-${codeId} // ACTIVO`;
+    }
+    if (this.biopassAvatar) this.biopassAvatar.textContent = initials;
+    if (this.biopassAvatarBadge) this.biopassAvatarBadge.textContent = avatarBadgeText;
+    if (this.biopassRankTag) {
+      this.biopassRankTag.textContent = rankTagText;
+      this.biopassRankTag.className = `biopass-rank-tag ${rankClass}`;
+    }
+    if (this.biopassName) this.biopassName.textContent = athlete.name;
+    if (this.biopassWeight) this.biopassWeight.textContent = String(weightKg);
+    if (this.biopassHeight) this.biopassHeight.textContent = String(heightCm);
+    if (this.biopassBmiTag) this.biopassBmiTag.textContent = `BMI ${bmi}`;
+
+    if (this.biopassScoreVal) this.biopassScoreVal.textContent = score > 0 ? String(score) : "--";
+    if (this.biopassScoreStatus) this.biopassScoreStatus.textContent = scoreLabel;
+
+    if (this.biopassRecordVal) this.biopassRecordVal.textContent = stats.recordCm > 0 ? stats.recordCm.toFixed(1) : "0.0";
+    if (this.biopassRecordSub) {
+      this.biopassRecordSub.textContent = stats.recordCm > 0 ? "Marca personal histórica" : "Sin récord registrado";
+    }
+
+    if (this.biopassLastVal) this.biopassLastVal.textContent = stats.lastJumpCm > 0 ? stats.lastJumpCm.toFixed(1) : "0.0";
+    if (this.biopassTotalJumps) {
+      this.biopassTotalJumps.textContent = `Total: ${stats.totalJumps || 0} saltos`;
+    }
+
+    // Sparkline de saltos recientes
+    if (this.biopassSparkline) {
+      const history = (stats.jumpHistory && stats.jumpHistory.length > 0)
+        ? stats.jumpHistory
+        : (stats.recordCm > 0 ? [stats.recordCm] : []);
+
+      if (history.length === 0) {
+        this.biopassSparkline.innerHTML = `<div class="telemetry-empty-hint">Aún no hay saltos grabados en esta sesión</div>`;
+      } else {
+        const recent = history.slice(-7);
+        const maxVal = Math.max(...recent, 1);
+        const peakVal = Math.max(...recent);
+        this.biopassSparkline.innerHTML = "";
+
+        recent.forEach((val, idx) => {
+          const isPeak = val === peakVal;
+          const col = document.createElement("div");
+          col.className = `telemetry-bar-col${isPeak ? " is-peak" : ""}`;
+          const heightPct = Math.max(14, Math.round((val / maxVal) * 100));
+
+          col.innerHTML = `
+            <span class="telemetry-bar-val">${val.toFixed(1)}</span>
+            <div class="telemetry-bar-fill" style="height: ${heightPct}%;"></div>
+            <span class="telemetry-bar-idx">#${idx + 1}</span>
+          `;
+          this.biopassSparkline!.appendChild(col);
+        });
+      }
+    }
+  }
+
+  /**
+   * Abre el modal del póster y genera la imagen HD
+   */
+  public openPosterModal(): void {
+    if (!this.posterModal) return;
+
+    let athlete = this.athleteRoster.find(a => a.id === this.activeAthleteId);
+    if (!athlete && this.athleteRoster.length > 0) {
+      athlete = this.athleteRoster[0];
+    }
+    if (!athlete) {
+      this.showToast("⚠️ Primero registra un atleta para generar su póster", 'warning');
+      return;
+    }
+
+    const stats = UIView.getAthleteStats(athlete.id);
+    this.renderNikePoster(athlete, stats);
+    this.posterModal.style.display = "flex";
+    this.posterModal.setAttribute("aria-hidden", "false");
+  }
+
+  /**
+   * Cierra el modal del póster
+   */
+  public closePosterModal(): void {
+    if (!this.posterModal) return;
+    this.posterModal.style.display = "none";
+    this.posterModal.setAttribute("aria-hidden", "true");
+  }
+
+  /**
+   * Renderiza el póster Nike / Cyberpunk de alta definición en el canvas
+   */
+  public renderNikePoster(athlete: RemoteAthlete, stats: AthleteStats): void {
+    const canvas = (this.posterCanvas ?? document.getElementById("poster-render-canvas")) as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    const W = 1080;
+    const H = 1350;
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const drawRoundRect = (x: number, y: number, w: number, h: number, r: number) => {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    };
+
+    const initials = this.getInitials(athlete.name);
+    const weightKg = athlete.weightKg;
+    const heightCm = athlete.heightCm;
+    const heightM = heightCm / 100;
+    const bmi = heightM > 0 ? (weightKg / (heightM * heightM)).toFixed(1) : "--";
+    const levelInfo = UIView.getLevelInfo(stats.recordCm);
+
+    let score = 0;
+    let scoreLabel = "PROSPECTO";
+    if (stats.recordCm > 0) {
+      const heightPart = Math.min(80, (stats.recordCm / 75) * 80);
+      const jumpsPart = Math.min(19, (stats.totalJumps || 1) * 2);
+      score = Math.round(Math.min(99, heightPart + jumpsPart));
+      if (score >= 90) scoreLabel = "ÉLITE AIR JORDAN";
+      else if (score >= 75) scoreLabel = "ALTO RENDIMIENTO";
+      else if (score >= 60) scoreLabel = "NIVEL PRO";
+      else scoreLabel = "PROSPECTO EN ALZA";
+    }
+
+    // 1. Fondo degradado Cyber / Nike
+    const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+    bgGrad.addColorStop(0, "#050811");
+    bgGrad.addColorStop(0.35, "#0B152B");
+    bgGrad.addColorStop(0.7, "#080F1F");
+    bgGrad.addColorStop(1, "#03060C");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Resplandor radial cian arriba
+    const cyanGlow = ctx.createRadialGradient(240, 180, 20, 240, 180, 420);
+    cyanGlow.addColorStop(0, "rgba(0, 242, 254, 0.22)");
+    cyanGlow.addColorStop(1, "rgba(0, 242, 254, 0)");
+    ctx.fillStyle = cyanGlow;
+    ctx.fillRect(0, 0, W, H);
+
+    // Resplandor radial volt en el centro-derecha
+    const voltGlow = ctx.createRadialGradient(880, 680, 30, 880, 680, 480);
+    voltGlow.addColorStop(0, "rgba(206, 255, 0, 0.16)");
+    voltGlow.addColorStop(1, "rgba(206, 255, 0, 0)");
+    ctx.fillStyle = voltGlow;
+    ctx.fillRect(0, 0, W, H);
+
+    // Cuadrícula cyberpunk sutil
+    ctx.strokeStyle = "rgba(0, 242, 254, 0.04)";
+    ctx.lineWidth = 1;
+    for (let x = 60; x < W; x += 60) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, H);
+      ctx.stroke();
+    }
+    for (let y = 60; y < H; y += 60) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(W, y);
+      ctx.stroke();
+    }
+
+    // Marca de agua Jumpman en el fondo si está disponible
+    const logoImg = document.querySelector<HTMLImageElement>(".logo-img") ?? document.querySelector<HTMLImageElement>(".biopass-watermark-img");
+    if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
+      ctx.save();
+      ctx.globalAlpha = 0.06;
+      ctx.drawImage(logoImg, W - 480, 280, 440, 440);
+      ctx.restore();
+    }
+
+    // Marco exterior con esquinas tecnológicas
+    const m = 44;
+    ctx.strokeStyle = "rgba(0, 242, 254, 0.28)";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(m, m, W - m * 2, H - m * 2);
+
+    // Esquinas neón volt
+    const cLen = 42;
+    ctx.strokeStyle = "#CEFF00";
+    ctx.lineWidth = 4;
+    // Top-left
+    ctx.beginPath(); ctx.moveTo(m - 2, m + cLen); ctx.lineTo(m - 2, m - 2); ctx.lineTo(m + cLen, m - 2); ctx.stroke();
+    // Top-right
+    ctx.beginPath(); ctx.moveTo(W - m - cLen, m - 2); ctx.lineTo(W - m + 2, m - 2); ctx.lineTo(W - m + 2, m + cLen); ctx.stroke();
+    // Bottom-left
+    ctx.beginPath(); ctx.moveTo(m - 2, H - m - cLen); ctx.lineTo(m - 2, H - m + 2); ctx.lineTo(m + cLen, H - m + 2); ctx.stroke();
+    // Bottom-right
+    ctx.beginPath(); ctx.moveTo(W - m - cLen, H - m + 2); ctx.lineTo(W - m + 2, H - m + 2); ctx.lineTo(W - m + 2, H - m - cLen); ctx.stroke();
+
+    // Franja neón superior
+    const barGrad = ctx.createLinearGradient(m, m, W - m, m);
+    barGrad.addColorStop(0, "#00F2FE");
+    barGrad.addColorStop(0.5, "#CEFF00");
+    barGrad.addColorStop(1, "#8B5CF6");
+    ctx.fillStyle = barGrad;
+    ctx.fillRect(m, m, W - m * 2, 6);
+
+    // Encabezado marca
+    ctx.font = "900 24px 'Montserrat', sans-serif";
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText("YOU CAN FLY", 84, 114);
+
+    ctx.font = "700 14px 'Space Grotesk', monospace";
+    ctx.fillStyle = "#00F2FE";
+    ctx.fillText("// FLIGHT LAB  •  BIO-PASS REPORT", 84, 140);
+
+    // Badge código atleta (top right)
+    ctx.fillStyle = "rgba(0, 242, 254, 0.12)";
+    ctx.fillRect(W - 270, 88, 186, 36);
+    ctx.strokeStyle = "rgba(0, 242, 254, 0.4)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(W - 270, 88, 186, 36);
+    ctx.font = "700 14px 'Space Grotesk', monospace";
+    ctx.fillStyle = "#00F2FE";
+    ctx.textAlign = "center";
+    ctx.fillText(`#AT-${athlete.id.slice(-4).toUpperCase()} // VERIFIED`, W - 177, 112);
+    ctx.textAlign = "left";
+
+    // Separador sutil
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+    ctx.beginPath();
+    ctx.moveTo(84, 175);
+    ctx.lineTo(W - 84, 175);
+    ctx.stroke();
+
+    // Avatar circular del atleta
+    const avX = 140;
+    const avY = 250;
+    const avR = 48;
+    const avGrad = ctx.createLinearGradient(avX - avR, avY - avR, avX + avR, avY + avR);
+    avGrad.addColorStop(0, "#00F2FE");
+    avGrad.addColorStop(0.5, "#4FACFE");
+    avGrad.addColorStop(1, "#8B5CF6");
+    ctx.beginPath();
+    ctx.arc(avX, avY, avR, 0, Math.PI * 2);
+    ctx.fillStyle = avGrad;
+    ctx.fill();
+    ctx.strokeStyle = "#FFFFFF";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.font = "900 36px 'Space Grotesk', monospace";
+    ctx.fillStyle = "#070B14";
+    ctx.textAlign = "center";
+    ctx.fillText(initials, avX, avY + 13);
+    ctx.textAlign = "left";
+
+    // Nombre del Atleta
+    ctx.font = "900 48px 'Montserrat', sans-serif";
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText(athlete.name, 215, 242);
+
+    // Tag de Nivel / Rank
+    ctx.font = "800 16px 'Space Grotesk', monospace";
+    ctx.fillStyle = levelInfo.class === 'elite' ? "#CEFF00" : (levelInfo.class === 'advanced' ? "#FFD700" : "#00F2FE");
+    ctx.fillText(`★ RANK: ${levelInfo.label.toUpperCase()} // ${scoreLabel}`, 215, 274);
+
+    // Pills métricas (peso, estatura, BMI)
+    ctx.font = "600 18px 'Space Grotesk', monospace";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
+    ctx.fillText(`${weightKg} KG   •   ${heightCm} CM   •   BMI ${bmi}`, 215, 304);
+
+    // CAJA HERO CENTRAL: RÉCORD MÁXIMO
+    const boxY = 345;
+    const boxH = 340;
+    ctx.fillStyle = "rgba(10, 18, 38, 0.75)";
+    drawRoundRect(84, boxY, W - 168, boxH, 20);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 215, 0, 0.35)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.font = "800 18px 'Space Grotesk', monospace";
+    ctx.fillStyle = "#FFD700";
+    ctx.fillText("🏆 RÉCORD DE ELEVACIÓN VERTICAL (PEAK)", 118, boxY + 48);
+
+    // Gran número de salto
+    ctx.font = "900 136px 'Space Grotesk', monospace";
+    ctx.fillStyle = "#FFD700";
+    const jumpStr = stats.recordCm > 0 ? stats.recordCm.toFixed(1) : "0.0";
+    ctx.fillText(jumpStr, 116, boxY + 188);
+
+    const jumpWidth = ctx.measureText(jumpStr).width;
+    ctx.font = "800 44px 'Space Grotesk', monospace";
+    ctx.fillStyle = "rgba(255, 215, 0, 0.85)";
+    ctx.fillText("CM", 126 + jumpWidth, boxY + 188);
+
+    // Frase / barra de progreso
+    ctx.font = "600 17px 'Space Grotesk', monospace";
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText(`Telemetría cinemática de salto con contramovimiento (CMJ)`, 118, boxY + 242);
+    ctx.font = "500 15px 'Space Grotesk', monospace";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
+    ctx.fillText(`Calibración por visión por computadora y fijado automático de suelo`, 118, boxY + 274);
+
+    // Barra de energía neón horizontal
+    const pBarW = W - 236;
+    const pBarY = boxY + 300;
+    ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+    ctx.fillRect(118, pBarY, pBarW, 8);
+    const progressFill = Math.min(pBarW, Math.round((stats.recordCm / 75) * pBarW));
+    const fillGrad = ctx.createLinearGradient(118, pBarY, 118 + progressFill, pBarY);
+    fillGrad.addColorStop(0, "#00F2FE");
+    fillGrad.addColorStop(0.5, "#CEFF00");
+    fillGrad.addColorStop(1, "#FFD700");
+    ctx.fillStyle = fillGrad;
+    ctx.fillRect(118, pBarY, Math.max(12, progressFill), 8);
+
+    // 3 CAJAS INFERIORES DE TELEMETRÍA (GRID)
+    const cardY = 720;
+    const cardW = (W - 168 - 36) / 3;
+    const cardH = 220;
+
+    // Caja 1: Último Salto
+    const lastJumpStr = stats.lastJumpCm > 0 ? stats.lastJumpCm.toFixed(1) : "0.0";
+    ctx.fillStyle = "rgba(10, 18, 38, 0.65)";
+    drawRoundRect(84, cardY, cardW, cardH, 16); ctx.fill();
+    ctx.strokeStyle = "rgba(0, 242, 254, 0.28)"; ctx.stroke();
+    ctx.font = "700 14px 'Space Grotesk', monospace"; ctx.fillStyle = "#00F2FE";
+    ctx.fillText("🎯 ÚLTIMO SALTO", 104, cardY + 38);
+    ctx.font = "900 44px 'Space Grotesk', monospace"; ctx.fillStyle = "#00F2FE";
+    ctx.fillText(lastJumpStr, 104, cardY + 98);
+    ctx.font = "700 18px 'Space Grotesk', monospace"; ctx.fillStyle = "rgba(0, 242, 254, 0.7)";
+    ctx.fillText("CM", 104 + ctx.measureText(lastJumpStr).width + 8, cardY + 98);
+    ctx.font = "600 14px 'Space Grotesk', monospace"; ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.fillText("Sesión activa", 104, cardY + 138);
+    ctx.fillText("Telemetría en vivo", 104, cardY + 164);
+
+    // Caja 2: Flight Score
+    const c2X = 84 + cardW + 18;
+    ctx.fillStyle = "rgba(10, 18, 38, 0.65)";
+    drawRoundRect(c2X, cardY, cardW, cardH, 16); ctx.fill();
+    ctx.strokeStyle = "rgba(139, 92, 246, 0.35)"; ctx.stroke();
+    ctx.font = "700 14px 'Space Grotesk', monospace"; ctx.fillStyle = "#A78BFA";
+    ctx.fillText("🏆 FLIGHT SCORE", c2X + 20, cardY + 38);
+    ctx.font = "900 44px 'Space Grotesk', monospace"; ctx.fillStyle = "#CEFF00";
+    const scoreStr = score > 0 ? `${score}` : "--";
+    ctx.fillText(scoreStr, c2X + 20, cardY + 98);
+    ctx.font = "700 18px 'Space Grotesk', monospace"; ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    ctx.fillText("/100", c2X + 20 + ctx.measureText(scoreStr).width + 6, cardY + 98);
+    ctx.font = "600 13px 'Space Grotesk', monospace"; ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.fillText(scoreLabel, c2X + 20, cardY + 138);
+    ctx.fillText("Índice de elevación", c2X + 20, cardY + 164);
+
+    // Caja 3: Total Saltos
+    const c3X = c2X + cardW + 18;
+    const jumpsStr = `${stats.totalJumps || 0}`;
+    ctx.fillStyle = "rgba(10, 18, 38, 0.65)";
+    drawRoundRect(c3X, cardY, cardW, cardH, 16); ctx.fill();
+    ctx.strokeStyle = "rgba(255, 215, 0, 0.28)"; ctx.stroke();
+    ctx.font = "700 14px 'Space Grotesk', monospace"; ctx.fillStyle = "#FFD700";
+    ctx.fillText("📊 TOTAL SALTOS", c3X + 20, cardY + 38);
+    ctx.font = "900 44px 'Space Grotesk', monospace"; ctx.fillStyle = "#FFD700";
+    ctx.fillText(jumpsStr, c3X + 20, cardY + 98);
+    ctx.font = "700 18px 'Space Grotesk', monospace"; ctx.fillStyle = "rgba(255, 215, 0, 0.7)";
+    ctx.fillText("SALTOS", c3X + 20 + ctx.measureText(jumpsStr).width + 8, cardY + 98);
+    ctx.font = "600 13px 'Space Grotesk', monospace"; ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.fillText("Historial acumulado", c3X + 20, cardY + 138);
+    ctx.fillText("Volumen de saltos", c3X + 20, cardY + 164);
+
+    // SECCIÓN DE TELEMETRÍA INFERIOR / CÓDIGO DE BARRAS
+    const footerY = 980;
+    ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
+    drawRoundRect(84, footerY, W - 168, 140, 16);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+    ctx.stroke();
+
+    // Dibujar falso código de barras elegante
+    const bcX = 114;
+    const bcY = footerY + 22;
+    const bcH = 50;
+    let currX = bcX;
+    const barWidths = [3, 1, 4, 2, 1, 5, 2, 4, 1, 3, 2, 6, 1, 3, 2, 4, 1, 5, 2, 3, 4, 1, 2, 5, 3, 1, 4, 2];
+    ctx.fillStyle = "rgba(0, 242, 254, 0.8)";
+    barWidths.forEach((bw, i) => {
+      ctx.fillRect(currX, bcY, bw, bcH);
+      currX += bw + (i % 2 === 0 ? 3 : 2);
+    });
+
+    ctx.font = "700 11px 'Space Grotesk', monospace";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    ctx.fillText(`ID-HASH: ${athlete.id}-${Date.now().toString(36).toUpperCase()}`, bcX, bcY + 66);
+
+    // Meta datos fecha y certificación
+    ctx.font = "700 14px 'Space Grotesk', monospace";
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText(`CERTIFICACIÓN YOU CAN FLY FLIGHT LAB`, 390, footerY + 44);
+    ctx.font = "500 13px 'Space Grotesk', monospace";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.fillText(`Fecha de Registro: ${stats.lastJumpDate || new Date().toLocaleDateString()}`, 390, footerY + 68);
+    ctx.fillText(`Cinemática de Pose mediante IA en dispositivo local`, 390, footerY + 90);
+
+    // PIE DE PÓSTER
+    ctx.font = "700 13px 'Space Grotesk', monospace";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+    ctx.textAlign = "center";
+    ctx.fillText("POWERED BY YOU CAN FLY AI  •  DESIGNED FOR JESICA DE SÃO JOÃO", W / 2, 1260);
+    ctx.textAlign = "left";
+
+    // Pasar resultado a imagen de previsualización
+    if (this.posterImgPreview) {
+      this.posterImgPreview.src = canvas.toDataURL("image/png");
+    }
+  }
+
+  /**
+   * Descarga la imagen HD del póster
+   */
+  public downloadPoster(): void {
+    const canvas = (this.posterCanvas ?? document.getElementById("poster-render-canvas")) as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    let athlete = this.athleteRoster.find(a => a.id === this.activeAthleteId);
+    const athleteName = athlete ? athlete.name.toLowerCase().replace(/[^a-z0-9]/gi, "-") : "atleta";
+    const filename = `you-can-fly-${athleteName}-record.png`;
+
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+    this.showToast("📸 Póster descargado con éxito", 'success');
   }
 
   /** @deprecated No se usa con el nuevo sistema roster */
@@ -1053,13 +1634,7 @@ export class UIView {
 
   /** Inicializa el roster cargando los atletas desde MockAPI al arrancar la app */
   public initAthleteHeaderFromRoster(callbacks: Parameters<UIView['bindEvents']>[0]): void {
-    // Sobrescribir openAthleteModal para pasar callbacks al render
-    const origOpen = this.openAthleteModal.bind(this);
-    this.openAthleteModal = () => {
-      origOpen();
-      this.renderRosterList(callbacks);
-      this.renderRankingList(callbacks);
-    };
+    this.savedCallbacks = callbacks;
 
     // Cargar atletas desde la API en segundo plano
     if (this.athleteRosterList) {
@@ -1105,6 +1680,10 @@ export class UIView {
             this.lastJumpTimeText.textContent = `Último salto: ${stats.lastJumpCm.toFixed(1)} cm`;
           }
         }
+
+        this.renderRosterList(callbacks);
+        this.renderRankingList(callbacks);
+        this.renderBiopass();
       })
       .catch(() => {
         // Fallo silencioso al arrancar — el usuario verá el error si abre el panel

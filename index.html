@@ -118,10 +118,6 @@
                 <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
               </svg>
             </div>
-            <div class="tip-text">
-              <strong>Ropa ajustada</strong>
-              <span>Usa ropa ajustada o deportiva para que la IA detecte mejor tus articulaciones</span>
-            </div>
           </li>
           <li class="video-tip-item">
             <div class="tip-icon-wrap tip-icon-green">
@@ -357,7 +353,7 @@
                 </div>
               </div>
 
-              <!-- Matriz de Rendimiento: 4 Cajas Telemetría HUD -->
+              <!-- Matriz de Rendimiento: 2 Cajas Telemetría HUD -->
               <div class="biopass-grid">
                 <!-- Récord Vertical -->
                 <div class="biopass-stat-box biopass-stat-record">
@@ -370,32 +366,6 @@
                     <span class="stat-unit">cm</span>
                   </div>
                   <span class="stat-box-sub" id="biopass-record-sub">Marca personal histórica</span>
-                </div>
-
-                <!-- Hang Time -->
-                <div class="biopass-stat-box biopass-stat-hangtime">
-                  <div class="stat-box-hdr">
-                    <span class="stat-box-icon">⏱️</span>
-                    <span class="stat-box-title">HANG TIME</span>
-                  </div>
-                  <div class="stat-box-value">
-                    <span class="stat-num-cyan" id="biopass-hangtime-val">0.00</span>
-                    <span class="stat-unit">s</span>
-                  </div>
-                  <span class="stat-box-sub" id="biopass-hangtime-sub">Ref Jordan: 0.92s</span>
-                </div>
-
-                <!-- Potencia Muscular en Watts -->
-                <div class="biopass-stat-box biopass-stat-power">
-                  <div class="stat-box-hdr">
-                    <span class="stat-box-icon">⚡</span>
-                    <span class="stat-box-title">POTENCIA EXPLOSIVA</span>
-                  </div>
-                  <div class="stat-box-value">
-                    <span class="stat-num-volt" id="biopass-watts-val">0</span>
-                    <span class="stat-unit">W</span>
-                  </div>
-                  <span class="stat-box-sub" id="biopass-watts-ratio">0.0 W/kg (Fuerza Relativa)</span>
                 </div>
 
                 <!-- Último Salto -->
@@ -430,7 +400,8 @@
 
               <!-- Botones de Acción de la Ficha -->
               <div class="biopass-actions-row">
-                <button type="button" id="btn-biopass-share" class="btn-biopass-action btn-share" title="Generar póster Nike para compartir">
+                <button type="button" id="btn-biopass-share" class="btn-biopass-action btn-share"
+                  title="Generar póster Nike para compartir">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                     <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
                     <polyline points="16 6 12 2 8 6" />
@@ -439,7 +410,8 @@
                   <span>Póster Nike</span>
                 </button>
 
-                <button type="button" id="btn-biopass-edit" class="btn-biopass-action btn-edit" title="Editar datos físicos del atleta">
+                <button type="button" id="btn-biopass-edit" class="btn-biopass-action btn-edit"
+                  title="Editar datos físicos del atleta">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
@@ -447,7 +419,8 @@
                   <span>Editar Ficha</span>
                 </button>
 
-                <button type="button" id="btn-biopass-switch-roster" class="btn-biopass-action btn-switch" title="Ver lista completa de atletas">
+                <button type="button" id="btn-biopass-switch-roster" class="btn-biopass-action btn-switch"
+                  title="Ver lista completa de atletas">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                     <circle cx="9" cy="7" r="4" />
@@ -581,7 +554,8 @@
 
         <!-- Footer dinámico: cambia según la vista activa -->
         <div class="athlete-modal-footer" id="athlete-modal-footer-biopass">
-          <p class="athlete-footer-hint" id="biopass-footer-hint">Toca las pestañas arriba para gestionar o ver el ránking</p>
+          <p class="athlete-footer-hint" id="biopass-footer-hint">Toca las pestañas arriba para gestionar o ver el
+            ránking</p>
         </div>
         <div class="athlete-modal-footer" id="athlete-modal-footer-roster" style="display:none;">
           <p class="athlete-footer-hint" id="roster-footer-hint">Toca un atleta para activarlo y ver su ficha</p>
@@ -625,7 +599,8 @@
         </div>
         <div class="poster-modal-footer">
           <button type="button" id="btn-download-poster" class="btn btn-primary btn-full-width">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:17px;height:17px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              style="width:17px;height:17px;">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
@@ -657,7 +632,7 @@
         </button>
       </div>
 
-      <p class="designer-credit">Designed by Jesica de São João</p>
+      <p class="designer-credit">Designed for Jesica de São João</p>
     </header>
 
     <!-- ═══════════════════════════════════════════════
