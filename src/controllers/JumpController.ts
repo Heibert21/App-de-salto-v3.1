@@ -542,7 +542,8 @@ export class JumpController {
                   peakHipY,
                   currentJumpCm,
                   state,
-                  avgVisibility
+                  avgVisibility,
+                  this.jumpModel.get3DQuality()
                 );
 
                 // Actualizar telemetría y HUD en tiempo real
@@ -585,7 +586,8 @@ export class JumpController {
               frame.peakHipY,
               frame.currentJumpCm,
               frame.state,
-              frame.avgVisibility
+              frame.avgVisibility,
+              this.jumpModel.get3DQuality()
             );
 
             this.uiView.updateMetrics(

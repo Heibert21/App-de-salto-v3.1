@@ -92,7 +92,8 @@ export class CanvasView {
     peakHipY: number,
     currentJumpCm: number,
     jumpState: JumpState,
-    avgVisibility: number = 0
+    avgVisibility: number = 0,
+    world3DQuality: number = 0
   ): void {
     this.clear();
     const width = this.canvas.width;
@@ -159,6 +160,11 @@ export class CanvasView {
 
     // 7. Dibujar esqueleto de la persona
     this.drawSkeleton(landmarks, width, height, jumpState);
+
+    // 8. Indicador de calidad de señal 3D world-space
+    if (world3DQuality > 0.05) {
+      this.drawWorld3DIndicator(width, world3DQuality, jumpState);
+    }
   }
 
   // ── NUEVO: Anillos de carga (PREPARING) ─────────────────────────────────
@@ -310,6 +316,81 @@ export class CanvasView {
         this.ctx.stroke();
       }
     }
+    this.ctx.restore();
+  }
+
+  // ── Indicador de calidad de señal 3D world-space ────────────────────────
+
+  private drawWorld3DIndicator(width: number, quality: number, _state: JumpState): void {
+    const isGood   = quality > 0.80;
+    const isActive = quality > 0.60;
+
+    // Color del badge según calidad: verde=excelente, amarillo=medio, rojo=bajo
+    const r = isGood ?   0 : isActive ? 255 : 255;
+    const g = isGood ? 230 : isActive ? 200 :  60;
+    const b = isGood ? 118 : isActive ?   0 :   0;
+
+    const badgeW  = this.mobile ? 58 : 70;
+    const badgeH  = this.mobile ? 20 : 24;
+    const badgeX  = width - badgeW - 12;
+    const badgeY  = 12;
+    const fontSize = this.mobile ? 9 : 11;
+
+    this.ctx.save();
+
+    // Fondo semitransparente
+    this.ctx.fillStyle = `rgba(0,0,0,${0.35 + quality * 0.30})`;
+    this.ctx.beginPath();
+    this.ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 6);
+    this.ctx.fill();
+
+    // Borde de color con glow sutil
+    this.ctx.strokeStyle = `rgba(${r},${g},${b},${0.6 + quality * 0.4})`;
+    this.ctx.lineWidth = 1.5;
+    if (!this.mobile) {
+      this.ctx.shadowColor = `rgba(${r},${g},${b},0.55)`;
+      this.ctx.shadowBlur = 8;
+    }
+    this.ctx.stroke();
+    this.ctx.shadowBlur = 0;
+
+    // Punto de señal pulsante
+    const dotR = this.mobile ? 3 : 4;
+    const dotX = badgeX + dotR + 7;
+    const dotY = badgeY + badgeH / 2;
+    const pulseA = 0.55 + 0.45 * Math.abs(Math.sin(this.pulsePhase * 1.6));
+    this.ctx.beginPath();
+    this.ctx.arc(dotX, dotY, dotR, 0, Math.PI * 2);
+    this.ctx.fillStyle = `rgba(${r},${g},${b},${pulseA})`;
+    this.ctx.fill();
+
+    // Etiqueta "3D"
+    this.ctx.fillStyle = `rgb(${r},${g},${b})`;
+    this.ctx.font = `bold ${fontSize}px 'Space Mono', monospace`;
+    this.ctx.textAlign = 'left';
+    this.ctx.textBaseline = 'middle';
+    this.ctx.fillText('3D', dotX + dotR + 5, dotY);
+
+    // Mini-barra de calidad
+    const barX  = dotX + dotR + 5 + (this.mobile ? 17 : 21);
+    const barW  = this.mobile ? 10 : 14;
+    const barH  = this.mobile ?  8 : 10;
+    const barY  = dotY - barH / 2;
+
+    this.ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    this.ctx.beginPath();
+    this.ctx.roundRect(barX, barY, barW, barH, 3);
+    this.ctx.fill();
+
+    const fillW = Math.max(2, barW * quality);
+    const grad  = this.ctx.createLinearGradient(barX, 0, barX + fillW, 0);
+    grad.addColorStop(0, `rgba(${r},${g},${b},0.9)`);
+    grad.addColorStop(1, `rgba(${r},${g},${b},0.4)`);
+    this.ctx.fillStyle = grad;
+    this.ctx.beginPath();
+    this.ctx.roundRect(barX, barY, fillW, barH, 3);
+    this.ctx.fill();
+
     this.ctx.restore();
   }
 

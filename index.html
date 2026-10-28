@@ -275,9 +275,9 @@
                VISTA: FICHA BIO-PASS HOLOGRÁFICA (FUTURISTA)
           ═══════════════════════════════════════════════ -->
           <div id="athlete-biopass-view">
-            <div class="biopass-card">
+            <div class="biopass-card" id="biopass-card">
               <!-- Franja neón superior y watermark -->
-              <div class="biopass-holo-stripe"></div>
+              <div class="biopass-holo-stripe" id="biopass-holo-stripe"></div>
               <div class="biopass-watermark-wrap">
                 <img src="/jumpman.png" alt="Jumpman Watermark" class="biopass-watermark-img" />
               </div>
@@ -297,8 +297,15 @@
               <div class="biopass-hero">
                 <div class="biopass-avatar-container">
                   <div class="biopass-radar-rings"></div>
-                  <div class="biopass-avatar" id="biopass-avatar">AT</div>
+                  <div class="biopass-avatar" id="biopass-avatar" role="button" tabindex="0" title="Haz clic para subir o cambiar foto">AT</div>
                   <div class="biopass-avatar-badge" id="biopass-avatar-badge">⚡</div>
+                  <button type="button" class="biopass-avatar-upload-btn" id="biopass-avatar-upload-btn" title="Cambiar foto de perfil" aria-label="Cambiar foto">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                      <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                  </button>
+                  <input type="file" id="biopass-avatar-input" accept="image/*" style="display:none;" />
                 </div>
                 <div class="biopass-hero-details">
                   <div class="biopass-rank-tag-wrap">

@@ -116,9 +116,12 @@ export class UIView {
   private rosterFooterHint: HTMLElement | null = null;
 
   // Elementos de la Ficha Bio-Pass
+  private biopassCard: HTMLElement | null = null;
   private biopassCodeBadge: HTMLElement | null = null;
   private biopassAvatar: HTMLElement | null = null;
   private biopassAvatarBadge: HTMLElement | null = null;
+  private biopassAvatarUploadBtn: HTMLButtonElement | null = null;
+  private biopassAvatarInput: HTMLInputElement | null = null;
   private biopassRankTag: HTMLElement | null = null;
   private biopassName: HTMLElement | null = null;
   private biopassWeight: HTMLElement | null = null;
@@ -318,9 +321,12 @@ export class UIView {
     this.rosterFooterHint = document.getElementById("roster-footer-hint");
 
     // Ficha Bio-Pass
+    this.biopassCard = document.getElementById("biopass-card");
     this.biopassCodeBadge = document.getElementById("biopass-code-badge");
     this.biopassAvatar = document.getElementById("biopass-avatar");
     this.biopassAvatarBadge = document.getElementById("biopass-avatar-badge");
+    this.biopassAvatarUploadBtn = document.getElementById("biopass-avatar-upload-btn") as HTMLButtonElement | null;
+    this.biopassAvatarInput = document.getElementById("biopass-avatar-input") as HTMLInputElement | null;
     this.biopassRankTag = document.getElementById("biopass-rank-tag");
     this.biopassName = document.getElementById("biopass-name");
     this.biopassWeight = document.getElementById("biopass-weight");
@@ -518,6 +524,65 @@ export class UIView {
     }
     if (this.btnBiopassSwitchRoster) {
       this.btnBiopassSwitchRoster.addEventListener("click", () => this.switchAthleteTab('roster'));
+    }
+
+    // Subida / cambio de foto de perfil del atleta
+    if (this.biopassAvatarUploadBtn && this.biopassAvatarInput) {
+      this.biopassAvatarUploadBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.biopassAvatarInput?.click();
+      });
+    }
+
+    if (this.biopassAvatar && this.biopassAvatarInput) {
+      this.biopassAvatar.addEventListener("click", () => {
+        this.biopassAvatarInput?.click();
+      });
+    }
+
+    if (this.biopassAvatarInput) {
+      this.biopassAvatarInput.addEventListener("change", () => {
+        const file = this.biopassAvatarInput?.files?.[0];
+        if (!file) return;
+
+        let athlete = this.athleteRoster.find(a => a.id === this.activeAthleteId);
+        if (!athlete && this.athleteRoster.length > 0) {
+          athlete = this.athleteRoster[0];
+        }
+        if (!athlete) {
+          this.showToast("⚠️ Primero registra un atleta para asignarle foto", "warning");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            // Redimensionar a un avatar centrado 256x256
+            const canvas = document.createElement("canvas");
+            canvas.width = 256;
+            canvas.height = 256;
+            const ctx = canvas.getContext("2d");
+            if (ctx && athlete) {
+              const minDim = Math.min(img.width, img.height);
+              const sx = (img.width - minDim) / 2;
+              const sy = (img.height - minDim) / 2;
+              ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, 256, 256);
+              const base64 = canvas.toDataURL("image/jpeg", 0.85);
+              this.saveAthleteAvatar(athlete.id, base64);
+              this.renderBiopass();
+              this.renderRosterList(callbacks);
+              this.renderRankingList(callbacks);
+              this.showToast("📸 ¡Foto de perfil actualizada con éxito!", "success");
+            }
+          };
+          img.src = e.target?.result as string;
+        };
+        reader.readAsDataURL(file);
+        if (this.biopassAvatarInput) {
+          this.biopassAvatarInput.value = "";
+        }
+      });
     }
 
     // Acciones del modal Póster Nike
@@ -748,8 +813,12 @@ export class UIView {
       const card = document.createElement('div');
       card.className = `athlete-roster-card${isActive ? ' roster-active' : ''}`;
       card.dataset.athleteId = athlete.id;
+      const avatarUrl = this.getAthleteAvatar(athlete.id);
+      const avatarHtml = avatarUrl
+        ? `<div class="roster-card-avatar"><img src="${avatarUrl}" alt="${athlete.name}" /></div>`
+        : `<div class="roster-card-avatar">${initials}</div>`;
       card.innerHTML = `
-        <div class="roster-card-avatar">${initials}</div>
+        ${avatarHtml}
         <div class="roster-card-info">
           <div class="roster-card-name-row">
             <span class="roster-card-name">${athlete.name}</span>
@@ -867,9 +936,13 @@ export class UIView {
 
       const card = document.createElement('div');
       card.className = `ranking-card ${rankClass}`;
+      const avatarUrl = this.getAthleteAvatar(item.athlete.id);
+      const avatarHtml = avatarUrl
+        ? `<div class="ranking-avatar"><img src="${avatarUrl}" alt="${item.athlete.name}" /></div>`
+        : `<div class="ranking-avatar">${initials}</div>`;
       card.innerHTML = `
         <div class="ranking-pos">${posEmoji}</div>
-        <div class="ranking-avatar">${initials}</div>
+        ${avatarHtml}
         <div class="ranking-info">
           <span class="ranking-name">${item.athlete.name}</span>
           <div class="ranking-meta">
@@ -1092,6 +1165,36 @@ export class UIView {
   }
 
   /**
+   * Obtiene la foto de perfil en base64 del atleta (desde localStorage o modelo)
+   */
+  public getAthleteAvatar(athleteId: string): string | null {
+    if (!athleteId) return null;
+    const stored = localStorage.getItem(`youcanfly_avatar_${athleteId}`);
+    if (stored) return stored;
+    const athlete = this.athleteRoster.find(a => a.id === athleteId);
+    return athlete?.avatarUrl ?? null;
+  }
+
+  /**
+   * Guarda la foto de perfil de un atleta en localStorage y actualiza MockAPI si está disponible
+   */
+  public saveAthleteAvatar(athleteId: string, dataUrl: string): void {
+    if (!athleteId) return;
+    try {
+      localStorage.setItem(`youcanfly_avatar_${athleteId}`, dataUrl);
+      const athlete = this.athleteRoster.find(a => a.id === athleteId);
+      if (athlete) {
+        athlete.avatarUrl = dataUrl;
+        AthleteService.update(athleteId, { avatarUrl: dataUrl }).catch(() => {
+          // Si MockAPI tiene payload limit o falla de red, el avatar se preserva en localStorage
+        });
+      }
+    } catch (e) {
+      console.warn("No se pudo guardar avatar en localStorage:", e);
+    }
+  }
+
+  /**
    * Renderiza todos los datos holográficos y telemetría de la Ficha Bio-Pass
    */
   public renderBiopass(): void {
@@ -1160,12 +1263,28 @@ export class UIView {
       avatarBadgeText = "🔥";
     }
 
+    // Borde y aura holográfica temática según rango en la tarjeta entera
+    if (this.biopassCard) {
+      this.biopassCard.classList.remove('rank-elite', 'rank-advanced', 'rank-intermediate', 'rank-beginner');
+      this.biopassCard.classList.add(rankClass);
+    }
+
     // Actualizar elementos DOM de la Ficha
     if (this.biopassCodeBadge) {
       const codeId = athlete.id.slice(-4).toUpperCase();
       this.biopassCodeBadge.textContent = `#AT-${codeId} // ACTIVO`;
     }
-    if (this.biopassAvatar) this.biopassAvatar.textContent = initials;
+
+    // Avatar con foto o iniciales
+    if (this.biopassAvatar) {
+      const customAvatar = this.getAthleteAvatar(athlete.id);
+      if (customAvatar) {
+        this.biopassAvatar.innerHTML = `<img src="${customAvatar}" class="biopass-avatar-img" alt="${athlete.name}" />`;
+      } else {
+        this.biopassAvatar.textContent = initials;
+      }
+    }
+
     if (this.biopassAvatarBadge) this.biopassAvatarBadge.textContent = avatarBadgeText;
     if (this.biopassRankTag) {
       this.biopassRankTag.textContent = rankTagText;
@@ -1189,33 +1308,129 @@ export class UIView {
       this.biopassTotalJumps.textContent = `Total: ${stats.totalJumps || 0} saltos`;
     }
 
-    // Sparkline de saltos recientes
+    // ── Sparkline de Curva SVG Interactiva con Gradiente Neón ──
     if (this.biopassSparkline) {
       const history = (stats.jumpHistory && stats.jumpHistory.length > 0)
         ? stats.jumpHistory
         : (stats.recordCm > 0 ? [stats.recordCm] : []);
 
       if (history.length === 0) {
-        this.biopassSparkline.innerHTML = `<div class="telemetry-empty-hint">Aún no hay saltos grabados en esta sesión</div>`;
+        this.biopassSparkline.innerHTML = `
+          <div class="telemetry-empty-hint">
+            <span>🎯 Aún no hay saltos en esta sesión</span>
+            <div style="margin-top:4px;font-size:0.62rem;color:var(--cyan);opacity:0.85;">Inicia la cámara o sube un video para comenzar</div>
+          </div>`;
+        if (this.biopassConsistencyBadge) {
+          this.biopassConsistencyBadge.textContent = "EN ESPERA";
+        }
       } else {
-        const recent = history.slice(-7);
-        const maxVal = Math.max(...recent, 1);
+        const recent = history.slice(-8); // Hasta 8 saltos recientes
+        const maxVal = Math.max(...recent);
+        const minVal = Math.min(...recent);
+        const avgVal = (recent.reduce((a, b) => a + b, 0) / recent.length).toFixed(1);
         const peakVal = Math.max(...recent);
-        this.biopassSparkline.innerHTML = "";
+        const count = recent.length;
 
-        recent.forEach((val, idx) => {
-          const isPeak = val === peakVal;
-          const col = document.createElement("div");
-          col.className = `telemetry-bar-col${isPeak ? " is-peak" : ""}`;
-          const heightPct = Math.max(14, Math.round((val / maxVal) * 100));
+        // Actualizar badge de consistencia
+        if (this.biopassConsistencyBadge) {
+          if (count > 1 && peakVal > 0) {
+            const consistencyPct = Math.round((Number(avgVal) / peakVal) * 100);
+            this.biopassConsistencyBadge.textContent = `${consistencyPct}% ESTABLE`;
+          } else {
+            this.biopassConsistencyBadge.textContent = "ACTIVO";
+          }
+        }
 
-          col.innerHTML = `
-            <span class="telemetry-bar-val">${val.toFixed(1)}</span>
-            <div class="telemetry-bar-fill" style="height: ${heightPct}%;"></div>
-            <span class="telemetry-bar-idx">#${idx + 1}</span>
+        if (count === 1) {
+          const val = recent[0];
+          this.biopassSparkline.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(0,242,254,0.04);border-radius:8px;border:1px dashed rgba(0,242,254,0.25);">
+              <div>
+                <span style="font-family:var(--font-mono);font-size:0.62rem;color:var(--text-muted);display:block;">SALTO INICIAL</span>
+                <strong style="font-family:var(--font-mono);font-size:1.25rem;color:var(--cyan);">${val.toFixed(1)} <span style="font-size:0.7rem;">cm</span></strong>
+              </div>
+              <div style="text-align:right;">
+                <span style="font-family:var(--font-mono);font-size:0.58rem;color:#00E676;background:rgba(0,230,118,0.12);padding:2px 6px;border-radius:4px;border:1px solid rgba(0,230,118,0.3);">BENCHMARK BASE</span>
+                <span style="display:block;font-size:0.6rem;color:var(--text-muted);margin-top:2px;">Realiza otro salto para ver la curva</span>
+              </div>
+            </div>
           `;
-          this.biopassSparkline!.appendChild(col);
-        });
+        } else {
+          // Generar curva SVG suave
+          const svgW = 320;
+          const svgH = 50;
+          const padX = 20;
+          const padY = 12;
+          const graphW = svgW - padX * 2;
+          const graphH = svgH - padY * 2;
+
+          const yRange = Math.max(maxVal - minVal, 4);
+          const yMin = Math.max(0, minVal - yRange * 0.2);
+          const yMax = maxVal + yRange * 0.2;
+
+          const points = recent.map((val, idx) => {
+            const x = padX + (idx / (count - 1)) * graphW;
+            const y = padY + graphH - ((val - yMin) / (yMax - yMin)) * graphH;
+            return { x, y, val, idx, isPeak: val === peakVal };
+          });
+
+          // Construcción de curva Bézier suave
+          let pathD = `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`;
+          for (let i = 0; i < points.length - 1; i++) {
+            const p0 = points[i];
+            const p1 = points[i + 1];
+            const cpX = (p0.x + p1.x) / 2;
+            pathD += ` C ${cpX.toFixed(1)} ${p0.y.toFixed(1)}, ${cpX.toFixed(1)} ${p1.y.toFixed(1)}, ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}`;
+          }
+
+          // Área cerrada debajo de la curva
+          const areaD = `${pathD} L ${points[points.length - 1].x.toFixed(1)} ${svgH} L ${points[0].x.toFixed(1)} ${svgH} Z`;
+
+          // Nodos SVG
+          const nodesSvg = points.map(p => {
+            const isPeak = p.isPeak;
+            const nodeColor = isPeak ? '#FFD700' : '#00F2FE';
+            const radius = isPeak ? 4.5 : 3;
+            const ringSvg = isPeak ? `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="7.5" fill="none" stroke="#FFD700" stroke-width="1.2" class="sparkline-node-peak" />` : '';
+
+            return `
+              <g class="sparkline-node" title="Salto #${p.idx + 1}: ${p.val.toFixed(1)} cm">
+                ${ringSvg}
+                <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${radius}" fill="${nodeColor}" class="sparkline-node-circle" />
+                <text x="${p.x.toFixed(1)}" y="${(p.y - (isPeak ? 8 : 6)).toFixed(1)}" class="sparkline-val-label" fill="${isPeak ? '#FFD700' : '#FFFFFF'}">${p.val.toFixed(0)}</text>
+              </g>
+            `;
+          }).join('');
+
+          const consistencyPct = peakVal > 0 ? Math.round((Number(avgVal) / peakVal) * 100) : 100;
+
+          this.biopassSparkline.innerHTML = `
+            <svg viewBox="0 0 ${svgW} ${svgH}" class="biopass-sparkline-svg" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="sparklineGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#00F2FE" stop-opacity="0.45" />
+                  <stop offset="65%" stop-color="#CEFF00" stop-opacity="0.12" />
+                  <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+                </linearGradient>
+                <linearGradient id="sparklineStroke" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#00F2FE" />
+                  <stop offset="50%" stop-color="#CEFF00" />
+                  <stop offset="100%" stop-color="#FFD700" />
+                </linearGradient>
+              </defs>
+              <line x1="${padX}" y1="${padY + graphH / 2}" x2="${svgW - padX}" y2="${padY + graphH / 2}" class="sparkline-grid-line" />
+              <line x1="${padX}" y1="${padY + graphH}" x2="${svgW - padX}" y2="${padY + graphH}" class="sparkline-baseline" />
+              <path d="${areaD}" fill="url(#sparklineGrad)" class="sparkline-area" />
+              <path d="${pathD}" stroke="url(#sparklineStroke)" class="sparkline-curve" />
+              ${nodesSvg}
+            </svg>
+            <div class="sparkline-summary-row">
+              <span class="sparkline-summary-chip">Promedio: <strong>${avgVal} cm</strong></span>
+              <span class="sparkline-summary-chip">Consistencia: <strong>${consistencyPct}%</strong></span>
+              <span class="sparkline-summary-chip is-gold">Pico: <strong>${peakVal.toFixed(1)} cm 🏆</strong></span>
+            </div>
+          `;
+        }
       }
     }
   }
@@ -1400,27 +1615,68 @@ export class UIView {
     ctx.lineTo(W - 84, 175);
     ctx.stroke();
 
-    // Avatar circular del atleta
+    // Avatar circular del atleta (Foto real o iniciales con gradiente)
     const avX = 140;
     const avY = 250;
     const avR = 48;
-    const avGrad = ctx.createLinearGradient(avX - avR, avY - avR, avX + avR, avY + avR);
-    avGrad.addColorStop(0, "#00F2FE");
-    avGrad.addColorStop(0.5, "#4FACFE");
-    avGrad.addColorStop(1, "#8B5CF6");
-    ctx.beginPath();
-    ctx.arc(avX, avY, avR, 0, Math.PI * 2);
-    ctx.fillStyle = avGrad;
-    ctx.fill();
-    ctx.strokeStyle = "#FFFFFF";
-    ctx.lineWidth = 3;
-    ctx.stroke();
+    const customAvatar = this.getAthleteAvatar(athlete.id);
 
-    ctx.font = "900 36px 'Space Grotesk', monospace";
-    ctx.fillStyle = "#070B14";
-    ctx.textAlign = "center";
-    ctx.fillText(initials, avX, avY + 13);
-    ctx.textAlign = "left";
+    const drawFallbackAvatar = () => {
+      const avGrad = ctx.createLinearGradient(avX - avR, avY - avR, avX + avR, avY + avR);
+      avGrad.addColorStop(0, "#00F2FE");
+      avGrad.addColorStop(0.5, "#4FACFE");
+      avGrad.addColorStop(1, "#8B5CF6");
+      ctx.beginPath();
+      ctx.arc(avX, avY, avR, 0, Math.PI * 2);
+      ctx.fillStyle = avGrad;
+      ctx.fill();
+      ctx.strokeStyle = "#FFFFFF";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.font = "900 36px 'Space Grotesk', monospace";
+      ctx.fillStyle = "#070B14";
+      ctx.textAlign = "center";
+      ctx.fillText(initials, avX, avY + 13);
+      ctx.textAlign = "left";
+    };
+
+    if (customAvatar) {
+      const avatarImgEl = this.biopassAvatar?.querySelector('img');
+      if (avatarImgEl && avatarImgEl.complete && avatarImgEl.naturalWidth > 0) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(avX, avY, avR, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.drawImage(avatarImgEl, avX - avR, avY - avR, avR * 2, avR * 2);
+        ctx.restore();
+        ctx.strokeStyle = "#00F2FE";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(avX, avY, avR, 0, Math.PI * 2);
+        ctx.stroke();
+      } else {
+        const avImg = new Image();
+        avImg.src = customAvatar;
+        if (avImg.complete && avImg.naturalWidth > 0) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(avX, avY, avR, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.drawImage(avImg, avX - avR, avY - avR, avR * 2, avR * 2);
+          ctx.restore();
+          ctx.strokeStyle = "#00F2FE";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(avX, avY, avR, 0, Math.PI * 2);
+          ctx.stroke();
+        } else {
+          drawFallbackAvatar();
+        }
+      }
+    } else {
+      drawFallbackAvatar();
+    }
 
     // Nombre del Atleta
     ctx.font = "900 48px 'Montserrat', sans-serif";

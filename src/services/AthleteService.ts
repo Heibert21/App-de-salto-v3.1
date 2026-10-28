@@ -11,6 +11,7 @@ export interface RemoteAthlete {
   weightKg: number;
   heightCm: number;
   createdAt?: string;
+  avatarUrl?: string;
 }
 
 export const AthleteService = {

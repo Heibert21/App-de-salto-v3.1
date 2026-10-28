@@ -55,6 +55,16 @@ export class JumpModel {
   private standingLegLengthPx: number = 0;   // Longitud anatómica de piernas en reposo (hip-to-ankle px)
   private isBaselineLocked: boolean = false;
 
+  // ── 3D World-Space Tracking (worldLandmarks en metros, centro de cadera) ──
+  // baselineWorldHipY: posición Y de la cadera en reposo en metros (worldLandmarks)
+  private baselineWorldHipY: number | null = null;
+  private smoothedWorldHipY: number | null = null;
+  private peakWorldHipY: number = Infinity;   // Máxima elevación en Y world (mínimo = más alto)
+  private baselineWorldHipSamples: number[] = [];
+  private readonly WORLD_BASELINE_SAMPLE_COUNT = 15;
+  // Calidad de la señal 3D: 0 = sin datos, 1 = excelente
+  private world3DQuality: number = 0;
+
   // Parámetros del atleta
   private athleteName: string = 'Atleta';
   private athleteWeightKg: number = 70;
@@ -204,6 +214,14 @@ export class JumpModel {
     return this.peakHipY;
   }
 
+  /**
+   * Calidad de la señal 3D world-space [0..1].
+   * 0 = sin datos 3D, 1 = señal excelente y estable.
+   */
+  public get3DQuality(): number {
+    return this.world3DQuality;
+  }
+
   public getLastFlightTimeMs(): number {
     return this.lastFlightTimeMs;
   }
@@ -325,7 +343,12 @@ export class JumpModel {
     this.lastHipYForVelocity = null;
     this.lastTimeMsForVelocity = 0;
 
-
+    // Reset de estado 3D world-space
+    this.baselineWorldHipY = null;
+    this.smoothedWorldHipY = null;
+    this.peakWorldHipY = Infinity;
+    this.baselineWorldHipSamples = [];
+    this.world3DQuality = 0;
   }
 
   /**
@@ -483,6 +506,34 @@ export class JumpModel {
 
     if (worldLandmarks) {
       this.estimateHeightFrom3D(worldLandmarks);
+      // Calibrar también el baseline 3D world-space
+      this.calibrateWorldBaseline(worldLandmarks);
+    }
+  }
+
+  /**
+   * Acumula muestras del baseline 3D (cadera en reposo en metros) y calcula la mediana
+   * una vez que hay suficientes frames estables para garantizar robustez ante ruido.
+   */
+  private calibrateWorldBaseline(worldLandmarks: NormalizedLandmark[]): void {
+    const lh = worldLandmarks[23];
+    const rh = worldLandmarks[24];
+    if (!lh || !rh) return;
+
+    // En worldLandmarks, Y positivo apunta HACIA ABAJO (igual que canvas),
+    // pero MediaPipe los entrega con el origen en las caderas → compensar con offset.
+    // Usamos el promedio bilateral para mayor estabilidad ante asimetría.
+    const worldHipY = (lh.y + rh.y) / 2;
+
+    this.baselineWorldHipSamples.push(worldHipY);
+    if (this.baselineWorldHipSamples.length > this.WORLD_BASELINE_SAMPLE_COUNT) {
+      this.baselineWorldHipSamples.shift();
+    }
+
+    if (this.baselineWorldHipSamples.length >= 5) {
+      this.baselineWorldHipY = this.median(this.baselineWorldHipSamples);
+      this.smoothedWorldHipY = this.baselineWorldHipY;
+      this.peakWorldHipY = this.baselineWorldHipY;
     }
   }
 
@@ -525,7 +576,7 @@ export class JumpModel {
       ? ((leftToe!.y + rightToe!.y) / 2) * canvasHeight
       : rawAnkleY; // Fallback: usar tobillos como proxy de contacto con el suelo
 
-    // ── Suavizado EMA ──
+    // ── Suavizado EMA 2D ──
     if (this.smoothedHipY === null) {
       this.smoothedHipY = rawHipY;
       this.smoothedAnkleY = rawAnkleY;
@@ -534,6 +585,36 @@ export class JumpModel {
       this.smoothedHipY = this.EMA_ALPHA * rawHipY + (1 - this.EMA_ALPHA) * this.smoothedHipY;
       this.smoothedAnkleY = this.EMA_ALPHA * rawAnkleY + (1 - this.EMA_ALPHA) * (this.smoothedAnkleY ?? rawAnkleY);
       this.smoothedToeY = this.EMA_ALPHA * rawToeY + (1 - this.EMA_ALPHA) * (this.smoothedToeY ?? rawToeY);
+    }
+
+    // ── Suavizado EMA 3D (worldLandmarks) ──
+    // worldLandmarks entrega Y en metros con origen en la cadera al arrancar MediaPipe.
+    // Y negativo = más arriba que la posición de calibración.
+    if (worldLandmarks && worldLandmarks.length >= 33) {
+      const wlh = worldLandmarks[23];
+      const wrh = worldLandmarks[24];
+      const wla = worldLandmarks[27];
+      const wra = worldLandmarks[28];
+
+      if (wlh && wrh && wla && wra) {
+        const rawWorldHipY = (wlh.y + wrh.y) / 2;
+        // Actualizar calidad de la señal 3D basada en visibilidad de caderas
+        const hipVisibility = ((wlh.visibility ?? 0) + (wrh.visibility ?? 0)) / 2;
+        this.world3DQuality = 0.85 * this.world3DQuality + 0.15 * hipVisibility;
+
+        if (this.smoothedWorldHipY === null) {
+          this.smoothedWorldHipY = rawWorldHipY;
+          // Auto-calibrar el baseline 3D si no tenemos uno aún
+          if (this.baselineWorldHipY === null) {
+            this.calibrateWorldBaseline(worldLandmarks);
+          }
+        } else {
+          this.smoothedWorldHipY = this.EMA_ALPHA * rawWorldHipY + (1 - this.EMA_ALPHA) * this.smoothedWorldHipY;
+        }
+      }
+    } else {
+      // Sin worldLandmarks este frame: degradar la calidad progresivamente
+      this.world3DQuality = Math.max(0, this.world3DQuality - 0.02);
     }
 
     const currentHipY = this.smoothedHipY;
@@ -663,6 +744,11 @@ export class JumpModel {
           this.peakHipY = currentHipY;
         }
 
+        // Registrar el pico 3D: en worldLandmarks, Y más negativo = más arriba
+        if (this.smoothedWorldHipY !== null && this.smoothedWorldHipY < this.peakWorldHipY) {
+          this.peakWorldHipY = this.smoothedWorldHipY;
+        }
+
         // Estimación en vivo en tiempo real durante el vuelo
         const partialFlightTimeMs = nowMs - this.flightStartTimeMs;
         this.currentJumpCm = this.calculateLiveHeight(partialFlightTimeMs, currentHipY);
@@ -712,6 +798,8 @@ export class JumpModel {
     this.currentState = 'IN_AIR';
     this.peakHipY = currentSample.hipYPx;
     this.inAirFlightSamples = [{ t: currentSample.timestampMs, y: currentSample.hipYPx }];
+    // Inicializar pico 3D con la posición actual de despegue
+    this.peakWorldHipY = this.smoothedWorldHipY ?? Infinity;
 
     // Calcular velocidad de despegue en cm/s por 5 puntos Savitzky-Golay
     this.takeoffVelocityCmS = this.calculateTakeoffVelocityCmS(this.preTakeoffSamplesBuffer);
@@ -798,7 +886,7 @@ export class JumpModel {
     // 1. Altura por Cinemática de Tiempo de Vuelo Corregido
     this.lastFlightHeightCm = this.calculateJumpHeightFromFlightTime(this.lastFlightTimeMs);
 
-    // 2. Altura por Desplazamiento Vertical Escalado del Centro de Masa (Cadera)
+    // 2. Altura por Desplazamiento Vertical Escalado del Centro de Masa (Cadera, píxeles 2D)
     const deltaHipPx = Math.max(0, (this.baselineHipY ?? currentSample.hipYPx) - this.peakHipY);
     const cmPerPixel = this.standingBodyHeightPx > 0 ? (this.userHeightCm / this.standingBodyHeightPx) : 0.25;
     this.lastDisplacementHeightCm = deltaHipPx * cmPerPixel;
@@ -807,7 +895,22 @@ export class JumpModel {
     const v0CmS = this.takeoffVelocityCmS;
     this.lastKineticHeightCm = v0CmS > 0 ? (v0CmS * v0CmS) / (2 * GRAVITY_CM_S2) : 0;
 
-    // 4. Modelo de Fusión Triangulada de 3 Fuentes (Vuelo, Apogeo y Velocidad Lanzamiento)
+    // 4. Altura por Desplazamiento 3D (worldLandmarks en metros → cm) ── NUEVA FUENTE ──
+    // En worldLandmarks, Y más negativo = más arriba. El desplazamiento vertical real es:
+    //   ΔY_world = baselineWorldHipY - peakWorldHipY  (positivo cuando subió)
+    let world3DCm = 0;
+    const has3D = this.baselineWorldHipY !== null
+      && this.peakWorldHipY < Infinity
+      && this.world3DQuality > 0.45;
+
+    if (has3D) {
+      const deltaWorldM = this.baselineWorldHipY! - this.peakWorldHipY; // metros
+      world3DCm = Math.max(0, deltaWorldM * 100);  // convertir a cm
+      // Sanity-clamp: el salto 3D no debe exceder 120 cm ni ser menor que 1 cm
+      if (world3DCm > 120 || world3DCm < 1) world3DCm = 0;
+    }
+
+    // 5. Modelo de Fusión de 4 Fuentes (Vuelo, Apogeo 2D, Velocidad y Desplazamiento 3D)
     let finalHeightCm = 0;
 
     const flightCm = this.lastFlightHeightCm;
@@ -818,13 +921,12 @@ export class JumpModel {
       const maxVal = Math.max(flightCm, dispCm);
       const relativeDiff = Math.abs(flightCm - dispCm) / maxVal;
 
-      // ── Clamp de sanidad: si las dos fuentes discrepan más de un 40%,
-      // confiar solo en la cinemática de tiempo de vuelo, que es menos
-      // susceptible a errores de escala de píxeles y calibración de estatura ──
+      // ── Clamp de sanidad: si las dos fuentes 2D discrepan más de un 40%,
+      // confiar principalmente en la cinemática de tiempo de vuelo ──
       if (relativeDiff > 0.40) {
         finalHeightCm = flightCm;
       } else {
-        // Peso Gaussiano de Coherencia Parabólica
+        // Peso Gaussiano de Coherencia Parabólica (fuentes 2D)
         const wFlight = Math.exp(-3.5 * Math.pow(relativeDiff, 2));
         const wDisp = 1.0 - wFlight;
         let fused = wFlight * flightCm + wDisp * dispCm;
@@ -838,6 +940,19 @@ export class JumpModel {
       }
     } else {
       finalHeightCm = Math.max(flightCm, dispCm);
+    }
+
+    // ── Integrar fuente 3D en la fusión final ──
+    // El peso de la fuente 3D depende de su calidad de señal: a mayor calidad,
+    // mayor confianza. Con calidad >= 0.8 el 3D aporta hasta el 35% del resultado.
+    if (world3DCm > 1 && finalHeightCm > 1) {
+      // Verificar coherencia entre 3D y la fusión 2D (no deben diferir más del 45%)
+      const diff3D = Math.abs(world3DCm - finalHeightCm) / Math.max(world3DCm, finalHeightCm);
+      if (diff3D < 0.45) {
+        // Peso dinámico según calidad: 0 a 0.35
+        const w3D = Math.min(0.35, this.world3DQuality * 0.40);
+        finalHeightCm = (1 - w3D) * finalHeightCm + w3D * world3DCm;
+      }
     }
 
     // Guardar el anterior salto antes de actualizar
@@ -874,6 +989,8 @@ export class JumpModel {
   private calculateLiveHeight(flightMs: number, currentHipY: number): number {
     const flightCm = this.calculateJumpHeightFromFlightTime(flightMs);
 
+    let fused2D = flightCm;
+
     if (this.baselineHipY !== null && this.standingBodyHeightPx > 0) {
       const deltaHipPx = Math.max(0, this.baselineHipY - currentHipY);
       const dispCm = deltaHipPx * (this.userHeightCm / this.standingBodyHeightPx);
@@ -884,19 +1001,36 @@ export class JumpModel {
         const relativeDiff = Math.abs(flightCm - dispCm) / maxVal;
         const wFlight = Math.exp(-3.5 * relativeDiff * relativeDiff);
         const wDisp = 1.0 - wFlight;
-        const fused = wFlight * flightCm + wDisp * dispCm;
-
-        // En vivo la cota superior es la altura máxima parabólica teórica estimada
-        // desde la velocidad actual de despegue calculada a la mitad del vuelo:
-        // h_max = v₀² / (2g), donde v₀ ≈ g × t_vuelo_parcial (si no llegamos al pico aún)
-        const v0EstCmS = this.calculateInitialVelocity(flightMs * 2);
-        const theoreticalMaxCm = (v0EstCmS * v0EstCmS) / (2 * GRAVITY_CM_S2);
-        return Math.min(fused, theoreticalMaxCm * 1.05); // tolerancia del 5%
+        fused2D = wFlight * flightCm + wDisp * dispCm;
+      } else {
+        fused2D = Math.max(flightCm, dispCm);
       }
-      return Math.max(flightCm, dispCm);
     }
 
-    return flightCm;
+    // ── Corrección 3D en vivo ──
+    // Si la señal 3D está disponible y es coherente, incorporarla para compensar
+    // el ángulo de la cámara en tiempo real.
+    if (
+      this.baselineWorldHipY !== null
+      && this.smoothedWorldHipY !== null
+      && this.world3DQuality > 0.45
+    ) {
+      const deltaWorldM = this.baselineWorldHipY - this.smoothedWorldHipY;
+      const world3DCm = Math.max(0, deltaWorldM * 100);
+
+      if (world3DCm > 1 && fused2D > 1) {
+        const diff3D = Math.abs(world3DCm - fused2D) / Math.max(world3DCm, fused2D);
+        if (diff3D < 0.50) {
+          const w3D = Math.min(0.30, this.world3DQuality * 0.35);
+          fused2D = (1 - w3D) * fused2D + w3D * world3DCm;
+        }
+      }
+    }
+
+    // Cota superior parabólica teórica para evitar sobreestimaciones en vivo
+    const v0EstCmS = this.calculateInitialVelocity(flightMs * 2);
+    const theoreticalMaxCm = (v0EstCmS * v0EstCmS) / (2 * GRAVITY_CM_S2);
+    return Math.min(fused2D, theoreticalMaxCm * 1.05); // tolerancia del 5%
   }
 
   /**
